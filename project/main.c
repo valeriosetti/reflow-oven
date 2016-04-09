@@ -37,6 +37,7 @@
 #include "usbd_cdc.h"
 #include "stm32f4_discovery.h"
 #include "pcd8544.h"
+#include "SSR.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -86,11 +87,17 @@ int main(void)
   PCD8544_Init(0x38);
   PCD8544_GotoXY(0,0);
   PCD8544_Puts("That's amazing!!!", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-  PCD8544_DrawCircle(10, 30, 10, PCD8544_Pixel_Set);
-  PCD8544_DrawRectangle(20, 20, 40, 40, PCD8544_Pixel_Set);
   PCD8544_Refresh();
 
+  /* Initialize the SSR's PWM */
+  SSR_init();
+  SSR_set_duty_cycle(SSR_MAX_DUTY/2);
+  SSR_start();
+
   /* Infinite loop */
+  uint16_t tmp = 1;
+  uint8_t direction = 1; // 1 is for upcounting; 0 for downcounting
+
   while (1)
   {
 	  if (hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED){
@@ -100,6 +107,19 @@ int main(void)
 	  }
 	  HAL_Delay(250);
 	  BSP_LED_Toggle(LED5);
+	  SSR_set_duty_cycle(tmp);
+
+	  if (direction){
+		  tmp = tmp << 1;
+	  }else{
+		  tmp = tmp >> 1;
+	  }
+
+	  if (tmp == 0x8000)
+		  direction = 0;
+
+	  if (tmp == 0x0001)
+		  direction = 1;
   }
 }
 

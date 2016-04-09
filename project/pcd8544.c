@@ -287,7 +287,7 @@ void PCD8544_InitIO(void) {
 	HAL_GPIO_Init(PCD8544_DIN_PORT, &GPIO_InitStruct);
 
 	// Backlight pin
-	GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
 	GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
