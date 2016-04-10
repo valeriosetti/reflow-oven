@@ -18,8 +18,8 @@
 #include "MAX31855.h"
 
 // Local defines
-#define MAX31855_THERMOCOUPLE_DATA_MASK		0xFFFC0000
-#define MAX31855_INTERNAL_DATA_MASK			0x0000FFF0
+#define MAX31855_THERMOCOUPLE_DATA_MASK		((uint32_t)0xFFFC0000)
+#define MAX31855_INTERNAL_DATA_MASK			((uint32_t)0x0000FFF0)
 //// CE
 #define	MAX31855_CS_PORT				GPIOA
 #define	MAX31855_CS_PIN					GPIO_PIN_3
@@ -36,9 +36,16 @@
 #define	LIS3DSH_CLK_PORT				GPIOE
 #define	LIS3DSH_CLK_PIN					GPIO_PIN_3
 #define	LIS3DSH_CLK_CLKEN				__GPIOE_CLK_ENABLE
+//// Shortcuts for pin handling
+#define MAX31855_CE_LOW			HAL_GPIO_WritePin(MAX31855_CS_PORT, MAX31855_CS_PIN, GPIO_PIN_RESET)
+#define MAX31855_CE_HIGH		HAL_GPIO_WritePin(MAX31855_CS_PORT, MAX31855_CS_PIN, GPIO_PIN_SET)
 
 // Local variables
 SPI_HandleTypeDef hSPI;
+typedef union {
+	uint8_t  bytes[4];
+	uint32_t reg;
+}MAX31855_data;
 
 /*
  * Initialize the GPIOs and the SPI peripheral
@@ -55,17 +62,19 @@ void MAX31855_init()
 	HAL_GPIO_Init(LIS3DSH_CLK_PORT, &GPIO_InitStruct);
 	HAL_GPIO_WritePin(LIS3DSH_CLK_PORT, LIS3DSH_CLK_PIN, GPIO_PIN_SET);
 
+	// Configure the software controlled CS pin
+	GPIO_InitStruct.Pin = MAX31855_CS_PIN;
+	HAL_GPIO_Init(MAX31855_CS_PORT, &GPIO_InitStruct);
+	MAX31855_CE_HIGH;
+
 	// Configure the SPI pins
 	MAX31855_CS_CLKEN();
 	MAX31855_MISO_CLKEN();
 	MAX31855_CLK_CLKEN();
 	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitStruct.Pull = GPIO_PULLUP;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
 	GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
-	//// CS
-	GPIO_InitStruct.Pin = MAX31855_CS_PIN;
-	HAL_GPIO_Init(MAX31855_CS_PORT, &GPIO_InitStruct);
 	//// MISO
 	GPIO_InitStruct.Pin = MAX31855_MISO_PIN;
 	HAL_GPIO_Init(MAX31855_MISO_PORT, &GPIO_InitStruct);
@@ -99,7 +108,26 @@ void MAX31855_init()
  * 	- an "uint8_t" which contains possible faults. Using masks defined in the header
  * 	file it's possible to determine the type of fault.
  */
-uint8_t MAX31855_read(uint16_t* thermo_temp, uint16_t* int_temp)
+void MAX31855_read(uint16_t* thermo_temp, uint16_t* int_temp, uint8_t* status)
 {
+	MAX31855_data  raw_reading;
+	uint32_t tmp;
 
+	MAX31855_CE_LOW;
+	HAL_SPI_Receive(&hSPI, &raw_reading.bytes[0], 4, HAL_MAX_DELAY);
+	MAX31855_CE_HIGH;
+
+	// Extract thermocouple's temperature data
+	tmp = (raw_reading.reg && MAX31855_THERMOCOUPLE_DATA_MASK) >> 18;
+	*thermo_temp = (uint16_t) tmp;
+
+	// Extract internal temperature data
+	tmp = (raw_reading.reg && MAX31855_INTERNAL_DATA_MASK) >> 4;
+	*int_temp = (uint16_t) tmp;
+
+	// Extract status informations
+	tmp = raw_reading.reg && (MAX31855_SCV_FAULT || MAX31855_SCG_FAULT || MAX31855_OC_FAULT);
+	*status = (uint8_t) tmp;
 }
+
+
