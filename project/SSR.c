@@ -33,13 +33,11 @@ void SSR_init()
 	// Configure the GPIO
 	GPIO_CLKEN();
 	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-//	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
 	GPIO_InitStruct.Alternate = GPIO_AF2_TIM5;
 	GPIO_InitStruct.Pin = GPIO_PIN_NUM;
 	HAL_GPIO_Init(GPIO_PORT, &GPIO_InitStruct);
-//	HAL_GPIO_WritePin(GPIO_PORT, GPIO_PIN_NUM, GPIO_PIN_SET);
 
 	// Configure the timer and output-compare
 	TIMER_CLKEN();

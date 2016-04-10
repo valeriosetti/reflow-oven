@@ -38,6 +38,7 @@
 #include "stm32f4_discovery.h"
 #include "pcd8544.h"
 #include "SSR.h"
+#include "MAX31855.h"
 
 /* USER CODE BEGIN Includes */
 
