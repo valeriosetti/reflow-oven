@@ -32,6 +32,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc_if.h"
+#include "command_processor.h"
+
 /* USER CODE BEGIN INCLUDE */
 /* USER CODE END INCLUDE */
 
@@ -256,7 +258,11 @@ static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
   /* USER CODE BEGIN 6 */
   USBD_CDC_SetRxBuffer(hUsbDevice_0, &Buf[0]);
   USBD_CDC_ReceivePacket(hUsbDevice_0);
+
+  // Send the received data to our command processor
+  cmd_proc_receive_data(Buf, Len);
   CDC_Transmit_FS(Buf, (uint16_t) *Len);
+
   return (USBD_OK);
   /* USER CODE END 6 */ 
 }
