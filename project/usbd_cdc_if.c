@@ -261,7 +261,6 @@ static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
 
   // Send the received data to our command processor
   cmd_proc_receive_data(Buf, Len);
-  CDC_Transmit_FS(Buf, (uint16_t) *Len);
 
   return (USBD_OK);
   /* USER CODE END 6 */ 
