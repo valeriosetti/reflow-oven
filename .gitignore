@@ -5,3 +5,5 @@ build/objs/*
 /.dep/*
 /.project
 /datasheets/STM32F4xx - Reference manual.pdf
+/GUI/bin
+/GUI/obj
