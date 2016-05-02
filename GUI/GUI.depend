@@ -1,16 +1,20 @@
 # depslib dependency file v1.0
-1462137391 source:/home/valerio/reflow-oven/GUI/GUI_interface.cpp
+1462213530 source:/home/valerio/reflow-oven/GUI/GUI_interface.cpp
 	"GUI_interface.h"
 
-1462137391 /home/valerio/reflow-oven/GUI/GUI_interface.h
+1462223633 /home/valerio/reflow-oven/GUI/GUI_interface.h
 	<wx/string.h>
-	<wx/choice.h>
+	<wx/button.h>
 	<wx/gdicmn.h>
 	<wx/font.h>
 	<wx/colour.h>
 	<wx/settings.h>
-	<wx/button.h>
+	<wx/choice.h>
 	<wx/sizer.h>
+	<wx/stattext.h>
+	<wx/textctrl.h>
+	<wx/listbox.h>
+	<wx/statusbr.h>
 	<wx/frame.h>
 
 1462040869 /usr/local/include/wx-3.0/wx/string.h
@@ -965,11 +969,13 @@
 
 1462040871 /usr/local/include/wx-3.0/wx/gtk/app.h
 
-1462138917 source:/home/valerio/reflow-oven/GUI/GUI_interface_extend.cpp
+1462219526 source:/home/valerio/reflow-oven/GUI/GUI_interface_extend.cpp
 	"GUI_interface_extend.h"
 	"stdint.h"
+	<string.h>
+	<wx/msgdlg.h>
 
-1462137406 /home/valerio/reflow-oven/GUI/GUI_interface_extend.h
+1462217798 /home/valerio/reflow-oven/GUI/GUI_interface_extend.h
 	<wx/string.h>
 	<wx/choice.h>
 	<wx/gdicmn.h>
@@ -982,4 +988,122 @@
 	<wx/string.h>
 	"GUI_interface.h"
 	"ctb-0.16/ctb.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/stattext.h
+	"wx/defs.h"
+	"wx/control.h"
+	"wx/univ/stattext.h"
+	"wx/msw/stattext.h"
+	"wx/motif/stattext.h"
+	"wx/gtk/stattext.h"
+	"wx/gtk1/stattext.h"
+	"wx/osx/stattext.h"
+	"wx/cocoa/stattext.h"
+	"wx/os2/stattext.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/stattext.h
+
+1462040870 /usr/local/include/wx-3.0/wx/textctrl.h
+	"wx/defs.h"
+	"wx/control.h"
+	"wx/textentry.h"
+	"wx/dynarray.h"
+	"wx/gdicmn.h"
+	"wx/ioswrap.h"
+	"wx/x11/textctrl.h"
+	"wx/univ/textctrl.h"
+	"wx/msw/wince/textctrlce.h"
+	"wx/msw/textctrl.h"
+	"wx/motif/textctrl.h"
+	"wx/gtk/textctrl.h"
+	"wx/gtk1/textctrl.h"
+	"wx/osx/textctrl.h"
+	"wx/cocoa/textctrl.h"
+	"wx/os2/textctrl.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/textentry.h
+	"wx/filefn.h"
+	"wx/gdicmn.h"
+	"wx/gtk/textentry.h"
+	"wx/osx/textentry.h"
+	"wx/msw/textentry.h"
+	"wx/motif/textentry.h"
+	"wx/os2/textentry.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/textentry.h
+
+1462040869 /usr/local/include/wx-3.0/wx/ioswrap.h
+	"wx/beforestd.h"
+	<iostream.h>
+	<iostream>
+	"wx/afterstd.h"
+	"wx/msw/winundef.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/textctrl.h
+
+1462040870 /usr/local/include/wx-3.0/wx/listbox.h
+	"wx/defs.h"
+	"wx/ctrlsub.h"
+	"wx/univ/listbox.h"
+	"wx/msw/listbox.h"
+	"wx/motif/listbox.h"
+	"wx/gtk/listbox.h"
+	"wx/gtk1/listbox.h"
+	"wx/osx/listbox.h"
+	"wx/os2/listbox.h"
+	"wx/cocoa/listbox.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/listbox.h
+
+1462040870 /usr/local/include/wx-3.0/wx/msgdlg.h
+	"wx/defs.h"
+	"wx/dialog.h"
+	"wx/stockitem.h"
+	"wx/generic/msgdlgg.h"
+	"wx/cocoa/msgdlg.h"
+	"wx/msw/msgdlg.h"
+	"wx/motif/msgdlg.h"
+	"wx/gtk/msgdlg.h"
+	"wx/osx/msgdlg.h"
+	"wx/os2/msgdlg.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/dialog.h
+	"wx/toplevel.h"
+	"wx/containr.h"
+	"wx/sharedptr.h"
+	"wx/univ/dialog.h"
+	"wx/msw/dialog.h"
+	"wx/motif/dialog.h"
+	"wx/gtk/dialog.h"
+	"wx/gtk1/dialog.h"
+	"wx/osx/dialog.h"
+	"wx/cocoa/dialog.h"
+	"wx/os2/dialog.h"
+
+1462040869 /usr/local/include/wx-3.0/wx/containr.h
+	"wx/defs.h"
+	"wx/event.h"
+
+1462040869 /usr/local/include/wx-3.0/wx/sharedptr.h
+	"wx/defs.h"
+	"wx/atomic.h"
+
+1462040869 /usr/local/include/wx-3.0/wx/atomic.h
+	"wx/defs.h"
+	"wx/msw/wrapwin.h"
+	"libkern/OSAtomic.h"
+	<atomic.h>
+	"wx/thread.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/dialog.h
+
+1462040869 /usr/local/include/wx-3.0/wx/stockitem.h
+	"wx/defs.h"
+	"wx/chartype.h"
+	"wx/string.h"
+	"wx/accel.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/generic/msgdlgg.h
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/msgdlg.h
 

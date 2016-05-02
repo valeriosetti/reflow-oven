@@ -20,6 +20,10 @@
 class GUI_frame_ext : public GUI_frame
 {
 	private:
+        ctb::IOBase* COM_device;
+        static const int baudrate;
+        static const char* protocol;
+        static const ctb::SerialPort::FlowControl flowControl;
 
 	protected:
 
@@ -27,6 +31,7 @@ class GUI_frame_ext : public GUI_frame
         GUI_frame_ext( wxWindow* parent );
         ~GUI_frame_ext();
         void refresh_COM_list( wxCommandEvent& event );
+        void connect_to_COM( wxCommandEvent& event );
 };
 
 #endif // GUI_INTERFACE_EXTEND_H_INCLUDED
