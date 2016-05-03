@@ -43,6 +43,8 @@
 		<Unit filename="GUI_interface.h" />
 		<Unit filename="GUI_interface_extend.cpp" />
 		<Unit filename="GUI_interface_extend.h" />
+		<Unit filename="communication.cpp" />
+		<Unit filename="communication.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.h" />
 		<Extensions>

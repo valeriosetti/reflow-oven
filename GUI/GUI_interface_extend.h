@@ -15,15 +15,13 @@
 
 ///////////////////////////////////////////////////////////////////////////
 #include "GUI_interface.h"
+#include "communication.h"
 #include "ctb-0.16/ctb.h"
 
 class GUI_frame_ext : public GUI_frame
 {
 	private:
-        ctb::IOBase* COM_device;
-        static const int baudrate;
-        static const char* protocol;
-        static const ctb::SerialPort::FlowControl flowControl;
+        Communication* device;
 
 	protected:
 

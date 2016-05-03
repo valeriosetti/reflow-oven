@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1462213530 source:/home/valerio/reflow-oven/GUI/GUI_interface.cpp
+1462223633 source:/home/valerio/reflow-oven/GUI/GUI_interface.cpp
 	"GUI_interface.h"
 
 1462223633 /home/valerio/reflow-oven/GUI/GUI_interface.h
@@ -969,13 +969,13 @@
 
 1462040871 /usr/local/include/wx-3.0/wx/gtk/app.h
 
-1462219526 source:/home/valerio/reflow-oven/GUI/GUI_interface_extend.cpp
+1462308288 source:/home/valerio/reflow-oven/GUI/GUI_interface_extend.cpp
 	"GUI_interface_extend.h"
 	"stdint.h"
 	<string.h>
 	<wx/msgdlg.h>
 
-1462217798 /home/valerio/reflow-oven/GUI/GUI_interface_extend.h
+1462308355 /home/valerio/reflow-oven/GUI/GUI_interface_extend.h
 	<wx/string.h>
 	<wx/choice.h>
 	<wx/gdicmn.h>
@@ -987,6 +987,7 @@
 	<wx/frame.h>
 	<wx/string.h>
 	"GUI_interface.h"
+	"communication.h"
 	"ctb-0.16/ctb.h"
 
 1462040870 /usr/local/include/wx-3.0/wx/stattext.h
@@ -1106,4 +1107,10 @@
 1462040870 /usr/local/include/wx-3.0/wx/generic/msgdlgg.h
 
 1462040871 /usr/local/include/wx-3.0/wx/gtk/msgdlg.h
+
+1462309490 /home/valerio/reflow-oven/GUI/communication.h
+	"ctb-0.16/ctb.h"
+
+1462310913 source:/home/valerio/reflow-oven/GUI/communication.cpp
+	"communication.h"
 
