@@ -12,13 +12,8 @@
 #include "stm32f4xx_hal.h"
 #include "usbd_cdc_if.h"
 
-typedef enum{
-	CMD_PROC_OK = 0,
-	CMD_PROC_FAIL
-}CMD_PROC_RET;
-
 // Public functions
-CMD_PROC_RET cmd_proc_receive_data(uint8_t* Data, uint32_t *Len);
+int cmd_proc_receive_data(uint8_t* Data, uint32_t *Len);
 
 
 #endif /* COMMAND_PROCESSOR_H_ */

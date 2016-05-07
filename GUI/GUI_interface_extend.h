@@ -16,7 +16,11 @@
 ///////////////////////////////////////////////////////////////////////////
 #include "GUI_interface.h"
 #include "communication.h"
-#include "ctb-0.16/ctb.h"
+#include "libctb-0.16/include/portscan.h"
+#include "libctb-0.16/include/ctb.h"
+#include "stdint.h"
+#include <string.h>
+#include <wx/msgdlg.h>
 
 class GUI_frame_ext : public GUI_frame
 {

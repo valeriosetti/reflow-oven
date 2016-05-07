@@ -1,7 +1,8 @@
 #ifndef COMMUNICATION_H_INCLUDED
 #define COMMUNICATION_H_INCLUDED
 
-#include "ctb-0.16/ctb.h"
+#include "libctb-0.16/include/ctb.h"
+#include <wx/msgdlg.h>
 
 class Communication : public ctb::SerialPort
 {

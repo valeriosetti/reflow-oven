@@ -1,7 +1,5 @@
 #include "GUI_interface_extend.h"
-#include "stdint.h"
-#include <string.h>
-#include <wx/msgdlg.h>
+
 
 /*
     Constructor
@@ -50,7 +48,7 @@ void GUI_frame_ext::connect_to_COM( wxCommandEvent& event )
     wxString portname = this->m_choice1->GetString(this->m_choice1->GetSelection());
 
     if( device->connect(portname) != 0 ) {
-        wxMessageBox( wxT("Unable to open port"), wxT("Error"), wxICON_INFORMATION);
+        wxMessageBox( wxT("Device not found"), wxT("Error"), wxICON_INFORMATION);
         this->status_bar->SetStatusText(wxString("Disconnected"));
     }else{
         this->status_bar->SetStatusText(wxString("Connected"));

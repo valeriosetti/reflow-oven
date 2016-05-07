@@ -5,7 +5,7 @@
 const int Communication::baudrate = 115200;
 const char* Communication::protocol = "8N1";
 const ctb::SerialPort::FlowControl Communication::flowControl = ctb::SerialPort::NoFlowControl;
-const int Communication::timeout = 100;
+const int Communication::timeout = 1000;
 
 /**
  *  @brief  Constructor
@@ -70,8 +70,8 @@ void Communication::disconnect()
 int Communication::test_communication()
 {
     // Define Tx and Rx test buffers
-    std::string test_string("Test\n");
-    char receiveBuf[ sizeof(test_string) ];
+    std::string test_string("test\n");
+    char* ret_string;
     int ret_val;
 
     // Try to send test_string
@@ -83,14 +83,17 @@ int Communication::test_communication()
     }
 
     // Test if something was returned from the microcontroller
-    ret_val = this->Readv(receiveBuf, sizeof(receiveBuf)-1, this->timeout);
+//    ret_val = this->Readv(receiveBuf, sizeof(receiveBuf)-1, this->timeout);
+    size_t readed_bytes;
+
+    ret_val = this->ReadUntilEOS(ret_string, &readed_bytes);
     if ( ret_val == 0){
         // Nothing was returned before the timeout, so return an error
         this->disconnect();
         return -3;
     }
 
-    if ( test_string.compare(receiveBuf) != 0 ){
+    if ( strcmp(ret_string,"OK") != 0 ){
         this->disconnect();
         return -4;
     }

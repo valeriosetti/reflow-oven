@@ -11,10 +11,11 @@
 #include "string.h"
 
 // Local functions
-static CMD_PROC_RET process_line(void);
-static void add_reflow_point(int argc, char *argv[]);
-static void get_reflow_list(int argc, char *argv[]);
-static void clear_reflow_list(int argc, char *argv[]);
+static int process_line(void);
+static int test(int argc, char *argv[]);
+static int add_reflow_point(int argc, char *argv[]);
+static int get_reflow_list(int argc, char *argv[]);
+static int clear_reflow_list(int argc, char *argv[]);
 
 // Local defines
 #define	MAX_COMMAND_LENGTH	128
@@ -27,22 +28,23 @@ static void clear_reflow_list(int argc, char *argv[]);
 typedef struct{
 	uint16_t 	seconds;
 	uint16_t	temperature;
-	struct REFLOW_POINT*	prev;
-	struct REFLOW_POINT*	next;
 }REFLOW_POINT;
 
 // Local variables
-REFLOW_POINT *reflow_list = NULL;
+#define REFLOW_LIST_MAX_SIZE		10
+REFLOW_POINT reflow_list[REFLOW_LIST_MAX_SIZE];
+uint16_t reflow_list_size = 0;
 
 typedef struct{
 	char*	text_command;
-	void 	(*function)(int argc, char *argv[]);
+	int 	(*function)(int argc, char *argv[]);
 }CONSOLE_COMMAND;
 
 CONSOLE_COMMAND allowed_commands[] = {
 		{"add_reflow_point", add_reflow_point},
 		{"get_reflow_list", get_reflow_list},
 		{"clear_reflow_list", clear_reflow_list},
+		{"test", test},
 		{NULL, NULL}
 };
 
@@ -56,7 +58,7 @@ uint8_t current_pos = 0;
  * 	- Len => length of the received data
  * It returns CMD_PROC_OK if the reception is fine; CMD_PROC_FAIL otherwise
  */
-CMD_PROC_RET cmd_proc_receive_data(uint8_t* Data, uint32_t *Len)
+int cmd_proc_receive_data(uint8_t* Data, uint32_t *Len)
 {
 	uint8_t index;
 	char *pData;
@@ -65,18 +67,15 @@ CMD_PROC_RET cmd_proc_receive_data(uint8_t* Data, uint32_t *Len)
 		switch (Data[index]){
 		case '\0':
 			// Return an error if the \0 is found in the text
-			return CMD_PROC_FAIL;
+			return -1;
 			break;
 		case '\n':
 		case '\r':
-			// Process the line whenever \n or \r are received.
-			// First set the console to a new line
-			CDC_Transmit_FS_const_char("\n\r");
 			// Append a '\0' to the local buffer before processing it
 			single_line[current_pos] = '\0';
 			// Process the line just received
-			process_line();
-			break;
+			if (process_line() != 0)
+				CDC_Transmit_FS_const_char("Error\n");
 			break;
 		default:
 			// Copy the received data to the local buffer (if the buffer has not yet reached
@@ -85,27 +84,24 @@ CMD_PROC_RET cmd_proc_receive_data(uint8_t* Data, uint32_t *Len)
 				single_line[current_pos] = Data[index];
 				current_pos++;
 			}else{
-				return CMD_PROC_FAIL;
+				return -2;
 			}
-			// Echo the data back to the console as reference
-			CDC_Transmit_FS(Data, (uint16_t) *Len);
 		}
 	}
 
-	return CMD_PROC_OK;
+	return 0;
 }
 
 /*
  * Process the received command line
  */
-static CMD_PROC_RET process_line(void)
+static int process_line(void)
 {
 	char *funct;
 	char *args[MAX_ARGS_NUM];
 	char *token;
 	int argc = 0;
 	char separator[2] = " ";
-	uint8_t i;
 
 	// Parse all the elements of the command line
 	token = strtok(single_line, separator);
@@ -113,8 +109,7 @@ static CMD_PROC_RET process_line(void)
 		// The maximum number of elements was reached! Exit this function returning
 		// and error
 		if (argc == MAX_ARGS_NUM){
-			CDC_Transmit_FS_const_char("Too many arguments");
-			return CMD_PROC_FAIL;
+			return -1;
 		}
 
 		if (argc == 0){
@@ -123,43 +118,85 @@ static CMD_PROC_RET process_line(void)
 		}else{
 			// the other elements are the parameters
 			args[argc-1] = token;
+			argc++;
 		}
-		argc++;
 		token = strtok(NULL, separator);
 	};
-
 	current_pos = 0;
-	return CMD_PROC_OK;
+	
+	// Search the selected function andd call it with the specified 
+	// parameters
+	uint8_t i=0;
+	uint8_t res;
+	
+	while (allowed_commands[i].text_command != NULL){
+		// Compare the command with the known ones
+		res = strcmp(allowed_commands[i].text_command, funct);
+		if (res == 0){
+			// If a matching was found, then call the function
+			allowed_commands[i].function(argc, args);
+			return 0;
+		}
+		i++;
+	}
+	return -2;
 }
 
-/*
- *
+/**
+ *	@brief	Add a new point to the current reflow list
+ * 	@param	
+ * 	@return	0 in case of success; a negative value otherwise
  */
-static void add_reflow_point(int argc, char *argv[])
+static int add_reflow_point(int argc, char *argv[])
 {
-	REFLOW_POINT* new_element = malloc(sizeof(REFLOW_POINT));
-	if (reflow_list == NULL){
-		reflow_list = new_element;
-		reflow_list->prev = NULL;
-		reflow_list->next = NULL;
-		reflow_list->seconds = 0;
-		reflow_list->temperature = 25;
+	// Check if there's still space in the local buffer to store the data
+	if (reflow_list_size < REFLOW_LIST_MAX_SIZE){
+		reflow_list[reflow_list_size].seconds = 0;
+		reflow_list[reflow_list_size].temperature = 0;
+		reflow_list_size++;
+		CDC_Transmit_FS_const_char("OK\n");
+		return 0;
+	}else{
+		// Otherwise return an error
+		CDC_Transmit_FS_const_char("Error\n");
+		return -1;
 	}
 }
 
-/*
- *
+/**
+ *	@brief	Retrieve the current list
+ * 	@param	[none]
  */
-static void get_reflow_list(int argc, char *argv[])
+static int get_reflow_list(int argc, char *argv[])
 {
-	if (reflow_list == NULL)
-		return;
+	uint16_t i;
+	
+	for (i=0; i<reflow_list_size; i++){
+		CDC_Transmit_FS_const_char("time ");
+		CDC_Transmit_FS_const_char("?? ");
+		CDC_Transmit_FS_const_char("temperature ");
+		CDC_Transmit_FS_const_char("?? ");
+		CDC_Transmit_FS_const_char("\n");
+	}
+	return 0;
 }
-/*
- *
+
+/**
+ *	@brief	Clear the reflow list
+ * 	@param	[none]
  */
-static void clear_reflow_list(int argc, char *argv[])
+static int clear_reflow_list(int argc, char *argv[])
 {
-	if (reflow_list == NULL)
-		return;
+	reflow_list_size = 0;
+	CDC_Transmit_FS_const_char("OK\n");
+	return 0;
+}
+
+/**
+ *	@brief	Just send a feedback
+ * 	@param	[none]
+ */
+static int test(int argc, char *argv[])
+{
+	CDC_Transmit_FS_const_char("OK\n");
 }
