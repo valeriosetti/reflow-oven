@@ -18,7 +18,8 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/listbox.h>
+#include <wx/valtext.h>
+#include <wx/listctrl.h>
 #include <wx/statusbr.h>
 #include <wx/frame.h>
 
@@ -37,24 +38,26 @@ class GUI_frame : public wxFrame
 		wxChoice* m_choice1;
 		wxButton* connect;
 		wxStaticText* m_staticText3;
-		wxTextCtrl* m_textCtrl1;
+		wxTextCtrl* time_text;
 		wxStaticText* m_staticText4;
-		wxTextCtrl* m_textCtrl2;
-		wxButton* add_point;
+		wxTextCtrl* temp_text;
+		wxButton* add_point_btn;
 		wxStaticText* m_staticText2;
-		wxListBox* points_list;
-		wxButton* clear_list;
+		wxListCtrl* points_list;
+		wxButton* clear_list_btn;
 		wxButton* start;
 		wxStatusBar* status_bar;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void refresh_COM_list( wxCommandEvent& event ) { event.Skip(); }
 		virtual void connect_to_COM( wxCommandEvent& event ) { event.Skip(); }
+		virtual void add_point( wxCommandEvent& event ) { event.Skip(); }
+		virtual void clear_list( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		GUI_frame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 457,310 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		GUI_frame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 468,425 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		~GUI_frame();
 	
 };

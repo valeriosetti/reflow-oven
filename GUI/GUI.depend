@@ -1,8 +1,8 @@
 # depslib dependency file v1.0
-1462223633 source:/home/valerio/reflow-oven/GUI/GUI_interface.cpp
+1462742580 source:/home/valerio/reflow-oven/GUI/GUI_interface.cpp
 	"GUI_interface.h"
 
-1462223633 /home/valerio/reflow-oven/GUI/GUI_interface.h
+1462742580 /home/valerio/reflow-oven/GUI/GUI_interface.h
 	<wx/string.h>
 	<wx/button.h>
 	<wx/gdicmn.h>
@@ -13,7 +13,8 @@
 	<wx/sizer.h>
 	<wx/stattext.h>
 	<wx/textctrl.h>
-	<wx/listbox.h>
+	<wx/valtext.h>
+	<wx/listctrl.h>
 	<wx/statusbr.h>
 	<wx/frame.h>
 
@@ -969,10 +970,11 @@
 
 1462040871 /usr/local/include/wx-3.0/wx/gtk/app.h
 
-1462636532 source:/home/valerio/reflow-oven/GUI/GUI_interface_extend.cpp
+1462741154 source:/home/valerio/reflow-oven/GUI/GUI_interface_extend.cpp
 	"GUI_interface_extend.h"
+	<wx/msgdlg.h>
 
-1462641758 /home/valerio/reflow-oven/GUI/GUI_interface_extend.h
+1462742666 /home/valerio/reflow-oven/GUI/GUI_interface_extend.h
 	<wx/string.h>
 	<wx/choice.h>
 	<wx/gdicmn.h>
@@ -1216,4 +1218,50 @@
 1285508991 source:/home/valerio/reflow-oven/GUI/libctb-0.16/src/timer.cpp
 	"ctb-0.16/timer.h"
 	<unistd.h>
+
+1462040870 /usr/local/include/wx-3.0/wx/listctrl.h
+	"wx/defs.h"
+	"wx/listbase.h"
+	"wx/msw/listctrl.h"
+	"wx/osx/listctrl.h"
+	"wx/generic/listctrl.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/listbase.h
+	"wx/colour.h"
+	"wx/font.h"
+	"wx/gdicmn.h"
+	"wx/event.h"
+	"wx/control.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/generic/listctrl.h
+	"wx/containr.h"
+	"wx/scrolwin.h"
+	"wx/textctrl.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/scrolwin.h
+	"wx/panel.h"
+	"wx/gtk/scrolwin.h"
+	"wx/gtk1/scrolwin.h"
+	"wx/generic/scrolwin.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/panel.h
+	"wx/window.h"
+	"wx/containr.h"
+	"wx/univ/panel.h"
+	"wx/msw/panel.h"
+	"wx/generic/panelg.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/generic/panelg.h
+	"wx/bitmap.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/scrolwin.h
+
+1462040870 /usr/local/include/wx-3.0/wx/generic/scrolwin.h
+
+1462040870 /usr/local/include/wx-3.0/wx/valtext.h
+	"wx/defs.h"
+	"wx/validate.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/valgen.h
+	"wx/validate.h"
 

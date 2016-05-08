@@ -22,9 +22,8 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	refresh_list = new wxButton( this, wxID_ANY, wxT("Refresh List"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( refresh_list, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	wxString m_choice1Choices[] = { wxT("aaa"), wxT("bbb"), wxT("ccc") };
-	int m_choice1NChoices = sizeof( m_choice1Choices ) / sizeof( wxString );
-	m_choice1 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice1NChoices, m_choice1Choices, 0 );
+	wxArrayString m_choice1Choices;
+	m_choice1 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_choice1Choices, 0 );
 	m_choice1->SetSelection( 0 );
 	bSizer2->Add( m_choice1, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
@@ -40,18 +39,20 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText3->Wrap( -1 );
 	bSizer6->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrl1 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer6->Add( m_textCtrl1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	time_text = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	time_text->SetMaxLength( 4 ); 
+	bSizer6->Add( time_text, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Temperature [°C]"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	bSizer6->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_textCtrl2 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer6->Add( m_textCtrl2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	temp_text = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	temp_text->SetMaxLength( 4 ); 
+	bSizer6->Add( temp_text, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	add_point = new wxButton( this, wxID_ANY, wxT("Add Point"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer6->Add( add_point, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	add_point_btn = new wxButton( this, wxID_ANY, wxT("Add Point"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer6->Add( add_point_btn, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	bSizer1->Add( bSizer6, 1, wxEXPAND|wxBOTTOM, 5 );
 	
@@ -62,12 +63,11 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText2->Wrap( -1 );
 	bSizer3->Add( m_staticText2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	points_list = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-	points_list->Append( wxT("time=0s; temperature=100°C") );
-	bSizer3->Add( points_list, 0, wxALL, 5 );
+	points_list = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL );
+	bSizer3->Add( points_list, 1, wxEXPAND, 5 );
 	
-	clear_list = new wxButton( this, wxID_ANY, wxT("Clear List"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer3->Add( clear_list, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	clear_list_btn = new wxButton( this, wxID_ANY, wxT("Clear List"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer3->Add( clear_list_btn, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	bSizer1->Add( bSizer3, 1, wxBOTTOM|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
@@ -86,6 +86,8 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	// Connect Events
 	refresh_list->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::refresh_COM_list ), NULL, this );
 	connect->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::connect_to_COM ), NULL, this );
+	add_point_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::add_point ), NULL, this );
+	clear_list_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::clear_list ), NULL, this );
 }
 
 GUI_frame::~GUI_frame()
@@ -93,4 +95,6 @@ GUI_frame::~GUI_frame()
 	// Disconnect Events
 	refresh_list->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::refresh_COM_list ), NULL, this );
 	connect->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::connect_to_COM ), NULL, this );
+	add_point_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::add_point ), NULL, this );
+	clear_list_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::clear_list ), NULL, this );
 }

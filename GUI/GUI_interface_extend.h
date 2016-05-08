@@ -34,6 +34,8 @@ class GUI_frame_ext : public GUI_frame
         ~GUI_frame_ext();
         void refresh_COM_list( wxCommandEvent& event );
         void connect_to_COM( wxCommandEvent& event );
+        void add_point( wxCommandEvent& event );
+        void clear_list( wxCommandEvent& event );
 };
 
 #endif // GUI_INTERFACE_EXTEND_H_INCLUDED
