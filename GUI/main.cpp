@@ -21,6 +21,7 @@ IMPLEMENT_APP(MainClass);
 
 bool MainClass::OnInit()
 {
+//    this->frame = new GUI_frame_ext(0L);
     this->frame = new GUI_frame_ext(0L);
 
     frame->Show();

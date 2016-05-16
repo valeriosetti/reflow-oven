@@ -1,8 +1,8 @@
 # depslib dependency file v1.0
-1462742580 source:/home/valerio/reflow-oven/GUI/GUI_interface.cpp
+1463433978 source:/home/valerio/reflow-oven/GUI/GUI_interface.cpp
 	"GUI_interface.h"
 
-1462742580 /home/valerio/reflow-oven/GUI/GUI_interface.h
+1463433978 /home/valerio/reflow-oven/GUI/GUI_interface.h
 	<wx/string.h>
 	<wx/button.h>
 	<wx/gdicmn.h>
@@ -380,7 +380,7 @@
 1462040869 /usr/local/include/wx-3.0/wx/checkeddelete.h
 	"wx/cpp.h"
 
-1462040869 /usr/local/include/wx-3.0/wx/log.h
+1462916624 /usr/local/include/wx-3.0/wx/log.h
 	"wx/defs.h"
 	"wx/cpp.h"
 	"wx/string.h"
@@ -922,11 +922,11 @@
 
 1462040871 /usr/local/include/wx-3.0/wx/gtk/frame.h
 
-1462134583 source:/home/valerio/reflow-oven/GUI/main.cpp
+1463429529 source:/home/valerio/reflow-oven/GUI/main.cpp
 	"wx_pch.h"
 	"main.h"
 
-1462132023 /home/valerio/reflow-oven/GUI/main.h
+1463429608 /home/valerio/reflow-oven/GUI/main.h
 	<wx/app.h>
 	"GUI_interface_extend.h"
 	"ctb-0.16/ctb.h"
@@ -970,11 +970,12 @@
 
 1462040871 /usr/local/include/wx-3.0/wx/gtk/app.h
 
-1462741154 source:/home/valerio/reflow-oven/GUI/GUI_interface_extend.cpp
+1463435115 source:/home/valerio/reflow-oven/GUI/GUI_interface_extend.cpp
 	"GUI_interface_extend.h"
 	<wx/msgdlg.h>
+	"mathplot/mathplot.h"
 
-1462742666 /home/valerio/reflow-oven/GUI/GUI_interface_extend.h
+1463434326 /home/valerio/reflow-oven/GUI/GUI_interface_extend.h
 	<wx/string.h>
 	<wx/choice.h>
 	<wx/gdicmn.h>
@@ -989,8 +990,10 @@
 	"communication.h"
 	"libctb-0.16/include/portscan.h"
 	"libctb-0.16/include/ctb.h"
+	"mathplot/mathplot.h"
 	"stdint.h"
 	<string.h>
+	<sstream>
 	<wx/msgdlg.h>
 
 1462040870 /usr/local/include/wx-3.0/wx/stattext.h
@@ -1264,4 +1267,195 @@
 
 1462040871 /usr/local/include/wx-3.0/wx/valgen.h
 	"wx/validate.h"
+
+1258542466 /home/valerio/reflow-oven/GUI/mathplot/mathplot.h
+	<vector>
+	<wx/defs.h>
+	<wx/menu.h>
+	<wx/scrolwin.h>
+	<wx/event.h>
+	<wx/dynarray.h>
+	<wx/pen.h>
+	<wx/dcmemory.h>
+	<wx/string.h>
+	<wx/print.h>
+	<wx/image.h>
+	<deque>
+	<crtdbg.h>
+
+1462040870 /usr/local/include/wx-3.0/wx/menu.h
+	"wx/defs.h"
+	"wx/list.h"
+	"wx/window.h"
+	"wx/menuitem.h"
+	"wx/univ/menu.h"
+	"wx/msw/menu.h"
+	"wx/motif/menu.h"
+	"wx/gtk/menu.h"
+	"wx/gtk1/menu.h"
+	"wx/osx/menu.h"
+	"wx/cocoa/menu.h"
+	"wx/os2/menu.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/menuitem.h
+	"wx/defs.h"
+	"wx/object.h"
+	"wx/univ/menuitem.h"
+	"wx/msw/menuitem.h"
+	"wx/motif/menuitem.h"
+	"wx/gtk/menuitem.h"
+	"wx/gtk1/menuitem.h"
+	"wx/osx/menuitem.h"
+	"wx/cocoa/menuitem.h"
+	"wx/os2/menuitem.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/menuitem.h
+	"wx/bitmap.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/menu.h
+
+1462040870 /usr/local/include/wx-3.0/wx/dcmemory.h
+	"wx/dc.h"
+	"wx/bitmap.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/dc.h
+	"wx/object.h"
+	"wx/intl.h"
+	"wx/cursor.h"
+	"wx/font.h"
+	"wx/colour.h"
+	"wx/bitmap.h"
+	"wx/brush.h"
+	"wx/pen.h"
+	"wx/palette.h"
+	"wx/dynarray.h"
+	"wx/math.h"
+	"wx/image.h"
+	"wx/region.h"
+	"wx/affinematrix2d.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/brush.h
+	"wx/defs.h"
+	"wx/object.h"
+	"wx/gdiobj.h"
+	"wx/gdicmn.h"
+	"wx/msw/brush.h"
+	"wx/x11/brush.h"
+	"wx/gtk/brush.h"
+	"wx/gtk1/brush.h"
+	"wx/dfb/brush.h"
+	"wx/osx/brush.h"
+	"wx/cocoa/brush.h"
+	"wx/os2/brush.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/brush.h
+
+1462040870 /usr/local/include/wx-3.0/wx/affinematrix2d.h
+	"wx/defs.h"
+	"wx/affinematrix2dbase.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/affinematrix2dbase.h
+	"wx/defs.h"
+	"wx/geometry.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/geometry.h
+	"wx/defs.h"
+	"wx/utils.h"
+	"wx/gdicmn.h"
+	"wx/math.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/print.h
+	"wx/defs.h"
+	"wx/msw/printwin.h"
+	"wx/osx/printmac.h"
+	"wx/os2/printos2.h"
+	"wx/generic/printps.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/generic/printps.h
+	"wx/prntbase.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/prntbase.h
+	"wx/defs.h"
+	"wx/event.h"
+	"wx/cmndata.h"
+	"wx/panel.h"
+	"wx/scrolwin.h"
+	"wx/dialog.h"
+	"wx/frame.h"
+	"wx/dc.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/cmndata.h
+	"wx/defs.h"
+	"wx/gdicmn.h"
+	"wx/stream.h"
+
+1462917219 source:/home/valerio/reflow-oven/GUI/mathplot/mathplot.cpp
+	<wx/window.h>
+	"wx/object.h"
+	"wx/font.h"
+	"wx/colour.h"
+	"wx/settings.h"
+	"wx/sizer.h"
+	"wx/log.h"
+	"wx/intl.h"
+	"wx/dcclient.h"
+	"wx/cursor.h"
+	"mathplot.h"
+	<wx/bmpbuttn.h>
+	<wx/module.h>
+	<wx/msgdlg.h>
+	<wx/image.h>
+	<wx/tipwin.h>
+	<cmath>
+	<cstdio>
+	<ctime>
+
+1462040870 /usr/local/include/wx-3.0/wx/dcclient.h
+	"wx/dc.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/bmpbuttn.h
+	"wx/defs.h"
+	"wx/button.h"
+	"wx/univ/bmpbuttn.h"
+	"wx/msw/bmpbuttn.h"
+	"wx/motif/bmpbuttn.h"
+	"wx/gtk/bmpbuttn.h"
+	"wx/gtk1/bmpbuttn.h"
+	"wx/osx/bmpbuttn.h"
+	"wx/cocoa/bmpbuttn.h"
+	"wx/os2/bmpbuttn.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/bmpbuttn.h
+
+1462040869 /usr/local/include/wx-3.0/wx/module.h
+	"wx/object.h"
+	"wx/list.h"
+	"wx/arrstr.h"
+	"wx/dynarray.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/tipwin.h
+	"wx/popupwin.h"
+	"wx/frame.h"
+	"wx/arrstr.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/popupwin.h
+	"wx/defs.h"
+	"wx/nonownedwnd.h"
+	"wx/msw/popupwin.h"
+	"wx/os2/popupwin.h"
+	"wx/gtk/popupwin.h"
+	"wx/gtk1/popupwin.h"
+	"wx/x11/popupwin.h"
+	"wx/motif/popupwin.h"
+	"wx/dfb/popupwin.h"
+	"wx/osx/popupwin.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/popupwin.h
+
+1463002263 source:/home/valerio/reflow-oven/GUI/GUI_graph_extend.cpp
+	"GUI_graph_extend.h"
+
+1463002605 /home/valerio/reflow-oven/GUI/GUI_graph_extend.h
+	"GUI_interface.h"
+	"mathplot/mathplot.h"
 

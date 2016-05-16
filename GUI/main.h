@@ -20,6 +20,7 @@ class MainClass : public wxApp
         virtual bool OnInit();
 
     private:
+//        GUI_frame_ext* frame;
         GUI_frame_ext* frame;
         void find_COM_ports();
 };

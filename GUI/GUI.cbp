@@ -70,6 +70,8 @@
 		<Unit filename="libctb-0.16/src/timer.cpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.h" />
+		<Unit filename="mathplot/mathplot.cpp" />
+		<Unit filename="mathplot/mathplot.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
