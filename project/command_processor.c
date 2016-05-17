@@ -6,48 +6,34 @@
 
 // Includes
 #include "command_processor.h"
-#include "pcd8544.h"
-#include "stdlib.h"
-#include "string.h"
 
 // Local functions
 static int process_line(void);
 static int test(int argc, char *argv[]);
-static int add_reflow_point(int argc, char *argv[]);
-static int get_reflow_list(int argc, char *argv[]);
-static int clear_reflow_list(int argc, char *argv[]);
 
 // Local defines
 #define	MAX_COMMAND_LENGTH	128
 #define	MAX_ELEMENT_LENGTH 	32
 #define MAX_ARGS_NUM		4
 
-#define CDC_Transmit_FS_const_char(_text_) 		CDC_Transmit_FS(_text_, sizeof(_text_))
-
-// New types
-typedef struct{
-	uint16_t 	seconds;
-	uint16_t	temperature;
-}REFLOW_POINT;
-
-// Local variables
-#define REFLOW_LIST_MAX_SIZE		10
-REFLOW_POINT reflow_list[REFLOW_LIST_MAX_SIZE];
-uint16_t reflow_list_size = 0;
-
+// New typedefs
 typedef struct{
 	char*	text_command;
 	int 	(*function)(int argc, char *argv[]);
 }CONSOLE_COMMAND;
 
+// Here's the list of the allowed commands
 CONSOLE_COMMAND allowed_commands[] = {
 		{"add_reflow_point", add_reflow_point},
 		{"get_reflow_list", get_reflow_list},
 		{"clear_reflow_list", clear_reflow_list},
+		{"start_stop_reflow_process", start_stop_reflow_process},
 		{"test", test},
 		{NULL, NULL}
 };
 
+
+// Local variables
 char single_line[MAX_COMMAND_LENGTH];
 uint8_t current_pos = 0;
 
@@ -75,7 +61,7 @@ int cmd_proc_receive_data(uint8_t* Data, uint32_t *Len)
 			single_line[current_pos] = '\0';
 			// Process the line just received
 			if (process_line() != 0)
-				CDC_Transmit_FS_const_char("Error\n");
+				USB_printf("Error\n");
 			break;
 		default:
 			// Copy the received data to the local buffer (if the buffer has not yet reached
@@ -143,60 +129,10 @@ static int process_line(void)
 }
 
 /**
- *	@brief	Add a new point to the current reflow list
- * 	@param	
- * 	@return	0 in case of success; a negative value otherwise
- */
-static int add_reflow_point(int argc, char *argv[])
-{
-	// Check if there's still space in the local buffer to store the data
-	if (reflow_list_size < REFLOW_LIST_MAX_SIZE){
-		reflow_list[reflow_list_size].seconds = 0;
-		reflow_list[reflow_list_size].temperature = 0;
-		reflow_list_size++;
-		CDC_Transmit_FS_const_char("OK\n");
-		return 0;
-	}else{
-		// Otherwise return an error
-		CDC_Transmit_FS_const_char("Error\n");
-		return -1;
-	}
-}
-
-/**
- *	@brief	Retrieve the current list
- * 	@param	[none]
- */
-static int get_reflow_list(int argc, char *argv[])
-{
-	uint16_t i;
-	
-	for (i=0; i<reflow_list_size; i++){
-		CDC_Transmit_FS_const_char("time ");
-		CDC_Transmit_FS_const_char("?? ");
-		CDC_Transmit_FS_const_char("temperature ");
-		CDC_Transmit_FS_const_char("?? ");
-		CDC_Transmit_FS_const_char("\n");
-	}
-	return 0;
-}
-
-/**
- *	@brief	Clear the reflow list
- * 	@param	[none]
- */
-static int clear_reflow_list(int argc, char *argv[])
-{
-	reflow_list_size = 0;
-	CDC_Transmit_FS_const_char("OK\n");
-	return 0;
-}
-
-/**
  *	@brief	Just send a feedback
  * 	@param	[none]
  */
 static int test(int argc, char *argv[])
 {
-	CDC_Transmit_FS_const_char("OK\n");
+	USB_printf("OK\n");
 }

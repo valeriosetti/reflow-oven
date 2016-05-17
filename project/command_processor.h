@@ -11,6 +11,11 @@
 // Includes
 #include "stm32f4xx_hal.h"
 #include "usbd_cdc_if.h"
+#include "pcd8544.h"
+#include "stdlib.h"
+#include "string.h"
+#include "reflow_process.h"
+#include "USB_printf.h"
 
 // Public functions
 int cmd_proc_receive_data(uint8_t* Data, uint32_t *Len);
