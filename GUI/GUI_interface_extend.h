@@ -12,6 +12,7 @@
 #include <wx/sizer.h>
 #include <wx/frame.h>
 #include <wx/string.h>
+#include <wx/timer.h>
 
 ///////////////////////////////////////////////////////////////////////////
 #include "GUI_interface.h"
@@ -27,11 +28,11 @@
 class GUI_frame_ext : public GUI_frame
 {
 	private:
-        Communication* device;
+        Communication* STM32_device;
         mpWindow* m_plot;
 
-        int get_time_temp_data(long& time, long& temperature);
         void update_graph();
+        void ChildNotifiesConnection(bool status);
 
 	protected:
 
@@ -43,6 +44,8 @@ class GUI_frame_ext : public GUI_frame
         void insert_point( wxCommandEvent& event );
         void clear_list( wxCommandEvent& event );
         void remove_point( wxCommandEvent& event );
+        void stop( wxCommandEvent& event );
+		void start( wxCommandEvent& event );
 };
 
 #endif // GUI_INTERFACE_EXTEND_H_INCLUDED

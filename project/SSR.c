@@ -79,7 +79,16 @@ void SSR_stop()
  *	Change the PWM duty cycle
  * 		uint16_t duty => is the new duty cycle (0 is the minimum value, 60000 the maximum)
  */
-void SSR_set_duty_cycle(uint16_t duty)
+void SSR_set_duty_cycle(SENSOR_ID id, uint16_t duty)
 {
-	(TIMER)->CCR2 = (duty);
+	switch (id)
+	{
+		case SENSOR_1:
+		// TODO
+			break;
+		case SENSOR_2:
+		// TODO
+			break;
+	}
+//	(TIMER)->CCR2 = (duty);
 }

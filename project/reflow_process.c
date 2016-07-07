@@ -6,24 +6,31 @@
  */
 
 #include "reflow_process.h"
-#include "stdlib.h"
-#include "string.h"
+#include "SSR.h"
 
 // Local functions
-static void reflow_proc_send_update(uint16_t current_temp);
+static float compute_target_temp(uint32_t milliseconds);
+static uint16_t	compute_PWM_value(SENSOR_ID id, uint32_t delta_time, float thermo_temp, float target_temp);
 
 // New types
 typedef struct{
-	uint16_t 	seconds;
-	uint16_t	temperature;
+	uint32_t 	milliseconds;
+	float	temperature;
 }REFLOW_POINT;
 
 // Local variables
 #define REFLOW_LIST_MAX_SIZE		10
+
 REFLOW_POINT reflow_list[REFLOW_LIST_MAX_SIZE];		// List of reflow points
 uint16_t reflow_list_size = 0;			// Size of the reflow list
 uint8_t reflow_process_enabled = 0;		// Bool variable to start/stop the reflow process
 uint32_t reflow_process_tick;			// Local tick count for the reflow process
+float 	Pcoeff[NUMBER_OF_SENSORS],
+		Icoeff[NUMBER_OF_SENSORS],
+		Dcoeff[NUMBER_OF_SENSORS];		// PID coefficients
+// Global variables used for PID controller's calculations
+float previous_error = 0.0;
+float integral_error = 0.0;
 
 
 /**
@@ -35,14 +42,14 @@ int add_reflow_point(int argc, char *argv[])
 {
 	if (reflow_list_size < REFLOW_LIST_MAX_SIZE){
 		// Check if there's still space in the local buffer to store the data
-		reflow_list[reflow_list_size].seconds = atoi(argv[0]);
-		reflow_list[reflow_list_size].temperature = atoi(argv[1]);
+		reflow_list[reflow_list_size].milliseconds = atoi(argv[0])*1000;
+		reflow_list[reflow_list_size].temperature = atof(argv[1]);
 		reflow_list_size++;
-		USB_printf("OK\n");
+		USB_printf_buff("OK\n");
 		return 0;
 	}else{
 		// Otherwise return an error
-		USB_printf("Error\n");
+		USB_printf_buff("Error\n");
 		return -1;
 	}
 }
@@ -51,13 +58,18 @@ int add_reflow_point(int argc, char *argv[])
  *	@brief	Retrieve the current list
  * 	@param	[none]
  */
-int get_reflow_list(int argc, char *argv[])
+int get_reflow_point(int argc, char *argv[])
 {
-	uint16_t i;
-
-	for (i=0; i<reflow_list_size; i++){
-		USB_printf("point %d time %d temp %d\n", i, reflow_list[i].seconds, reflow_list[i].temperature);
+	if (argc != 1) {
+		USB_printf_buff("Error\n");
+		return -1;
 	}
+
+	uint16_t index = atoi(argv[0]);
+	uint32_t temp_int = reflow_list[index].temperature;;
+
+	USB_printf_buff("point %d -> time %d temp %d\n", index,
+						reflow_list[index].milliseconds/1000, temp_int);
 	return 0;
 }
 
@@ -68,17 +80,64 @@ int get_reflow_list(int argc, char *argv[])
 int clear_reflow_list(int argc, char *argv[])
 {
 	reflow_list_size = 0;
-	USB_printf("OK\n");
+	USB_printf_buff("OK\n");
 	return 0;
 }
 
 /**
  *	@brief	Start the reflow process
- * 	@param	argv[1]	=> is the boolean value {1,0} which enables/disables the reflow process
+ * 	@param	[none]
  */
-int start_stop_reflow_process(int argc, char *argv[])
+int start_reflow_process(int argc, char *argv[])
 {
-	reflow_process_enabled = atoi(argv[0]);
+	// Reset global variables before starting
+	reflow_process_tick = 0;
+	integral_error = 0.0;
+	previous_error = 0.0;
+
+	reflow_process_enabled = 1;
+}
+
+/**
+ *	@brief	Start the reflow process
+ * 	@param	[none]
+ */
+int stop_reflow_process(int argc, char *argv[])
+{
+	reflow_process_enabled = 0;
+
+	// Turn off the SSR
+	SSR_set_duty_cycle(SENSOR_1, SSR_MIN_DUTY);
+	SSR_set_duty_cycle(SENSOR_2, SSR_MIN_DUTY);
+
+	// Reset global variables
+	reflow_process_tick = 0;
+	integral_error = 0.0;
+	previous_error = 0.0;
+}
+
+/**
+ *	@brief	Configure the PID parameters for the reflow process
+ * 	@param	argv[]	=> are the P-I-D coefficients
+ */
+int set_PID_parameters(int argc, char *argv[])
+{
+	if (argc != 4) {
+		USB_printf_buff("Error\n");
+		return -1;
+	}
+
+	// Read which PID group should be set
+	// Note: sensor index is '1' based, whereas arrays are '0' based
+	SENSOR_ID id = atoi(argv[0]) - 1 ;
+
+	Pcoeff[id] = atof(argv[1]);
+	Icoeff[id] = atof(argv[2]);
+	Dcoeff[id] = atof(argv[3]);
+
+	USB_printf_buff("OK\n");
+
+	return 0;
 }
 
 /**
@@ -90,22 +149,97 @@ void reflow_process(uint32_t tick_interval)
 	if (reflow_process_enabled == 0)
 		return;
 
+	float thermo_temp_1, internal_temp_1, thermo_temp_2, internal_temp_2;
+	float target_temp;
+	uint8_t status;
+	uint16_t SSR_duty;
+
+	// Get a global status value from the two sensors
+	status = ( 	MAX31855_read(SENSOR_1, &thermo_temp_1, &internal_temp_1) ||
+				MAX31855_read(SENSOR_2, &thermo_temp_2, &internal_temp_2)  );
+
+	// In case of any error from thermocouples, then stop the process
+	if (status != 0) {
+		reflow_process_enabled = 0;
+		SSR_set_duty_cycle(SENSOR_1, SSR_MIN_DUTY);
+		SSR_set_duty_cycle(SENSOR_2, SSR_MIN_DUTY);
+		USB_printf_buff("Error\n");
+		return;
+	}
+
+	// Compute the next desired temperature for the current time (it's also converted to float)
+	target_temp = compute_target_temp(reflow_process_tick);
+
+	// Update SSR's PWM in order to match this temperature
+	SSR_duty = compute_PWM_value(SENSOR_1, tick_interval, thermo_temp_1, target_temp);
+	SSR_set_duty_cycle(SENSOR_1, SSR_duty);
+	SSR_duty = compute_PWM_value(SENSOR_2, tick_interval, thermo_temp_2, target_temp);
+	SSR_set_duty_cycle(SENSOR_2, SSR_duty);
+
+	// Send a feedback to the host PC about the current status
+	USB_printf_buff("time %d target %d temp_1 %d temp_2 %d\n",
+						reflow_process_tick,
+						(int32_t) target_temp,
+						(int32_t) thermo_temp_1,
+						(int32_t) thermo_temp_2 );
+
 	// Update the local tick count
 	reflow_process_tick += tick_interval;
 
-	/* TODO:
-	 * - compute the next desired temperature for the current time
-	 * - update SSR's PWM in order to match this temperature
-	 */
-
-	// Send a feedback to the host PC about the current status
-	reflow_proc_send_update(0);
+	// If the next iteration is over the last reflow point then stop the process
+	if (reflow_process_tick > reflow_list[reflow_list_size-1].milliseconds) {
+		stop_reflow_process(0, NULL);
+		USB_printf_buff("Stop\n");
+	}
 }
 
 /**
- *
+ *	@brief	Compute the target temperature at the specified time (in milliseconds)
+ *	@param	millisecond => the time value for which the temperature is computed
+ *	@return	The target temperature at the specified time
  */
-static void reflow_proc_send_update(uint16_t current_temp)
+static float compute_target_temp(uint32_t millisecond)
 {
-	USB_printf("time %d temp %d\n", reflow_process_tick, current_temp);
+	uint16_t i;
+	float dx, dy, float_ret_value;
+
+	// Place the specified millisecond value inside the predefined reflow list
+	for (i=0; (i<reflow_list_size) && (millisecond >= reflow_list[i].milliseconds); i++) {
+		// In case of a perfect match there's no need to interpolate, and the exact
+		// value can just be returned
+		if (millisecond == reflow_list[i].milliseconds)
+			return reflow_list[i].temperature;
+	}
+
+	// Otherwise an interpolation is needed (at the end of the previous for-cycle,
+	// "i" points to a point which comes later than the requested one)
+	dx = reflow_list[i].milliseconds - reflow_list[i-1].milliseconds;
+	dy = reflow_list[i].temperature - reflow_list[i-1].temperature;
+	float_ret_value = reflow_list[i-1].temperature +
+			(dy/dx)*(millisecond - reflow_list[i-1].milliseconds);
+
+	return float_ret_value;
+}
+
+/**
+ *	@brief	Compute the new value of PWM which should be used in order to reach the
+ *			desired temperature
+ *	@param	delta_time => is the time interval used for PID controller's computations
+ *			thermo_temp => is the current thermocouple's temperature
+ *			target_temp => is the desired temperature
+ *	@return	The new PWM value that should be set to the SSR
+ */
+static uint16_t	compute_PWM_value(SENSOR_ID id, uint32_t delta_time, float thermo_temp, float target_temp)
+{
+	float current_error, derivative_error;
+	uint16_t ret_val;
+
+	current_error = target_temp - thermo_temp;
+	integral_error = integral_error + current_error*delta_time;
+	derivative_error = (current_error - previous_error) / delta_time;
+	ret_val = 	Pcoeff[id]*current_error +
+				Icoeff[id]*integral_error +
+				Dcoeff[id]*derivative_error;
+
+	return ret_val;
 }

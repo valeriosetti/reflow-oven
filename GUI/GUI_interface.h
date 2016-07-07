@@ -16,9 +16,8 @@
 #include <wx/settings.h>
 #include <wx/choice.h>
 #include <wx/sizer.h>
+#include <wx/statline.h>
 #include <wx/stattext.h>
-#include <wx/textctrl.h>
-#include <wx/valtext.h>
 #include <wx/listctrl.h>
 #include <wx/statusbr.h>
 #include <wx/frame.h>
@@ -38,16 +37,32 @@ class GUI_frame : public wxFrame
 		wxButton* refresh_list;
 		wxChoice* m_choice1;
 		wxButton* connect;
+		wxStaticLine* m_staticline1;
 		wxStaticText* m_staticText3;
-		wxTextCtrl* time_text;
+		wxChoice* time_choice;
 		wxStaticText* m_staticText4;
-		wxTextCtrl* temp_text;
+		wxChoice* temp_choice;
 		wxButton* insert_point_btn;
 		wxStaticText* m_staticText2;
 		wxListCtrl* points_list;
 		wxButton* remove_point_btn;
 		wxButton* clear_list_btn;
-		wxButton* start;
+		wxStaticLine* m_staticline2;
+		wxStaticText* m_staticText5;
+		wxChoice* P_choice_1;
+		wxStaticText* m_staticText6;
+		wxChoice* I_choice_1;
+		wxStaticText* m_staticText7;
+		wxChoice* D_choice_1;
+		wxStaticText* m_staticText51;
+		wxChoice* P_choice_2;
+		wxStaticText* m_staticText61;
+		wxChoice* I_choice_2;
+		wxStaticText* m_staticText71;
+		wxChoice* D_choice_2;
+		wxStaticLine* m_staticline3;
+		wxButton* stop_btn;
+		wxButton* start_btn;
 		wxStatusBar* status_bar;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -56,11 +71,13 @@ class GUI_frame : public wxFrame
 		virtual void insert_point( wxCommandEvent& event ) { event.Skip(); }
 		virtual void remove_point( wxCommandEvent& event ) { event.Skip(); }
 		virtual void clear_list( wxCommandEvent& event ) { event.Skip(); }
+		virtual void stop( wxCommandEvent& event ) { event.Skip(); }
+		virtual void start( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		GUI_frame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 882,442 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		GUI_frame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 685,627 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		~GUI_frame();
 	
 };

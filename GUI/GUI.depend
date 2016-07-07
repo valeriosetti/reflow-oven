@@ -1,8 +1,8 @@
 # depslib dependency file v1.0
-1463433978 source:/home/valerio/reflow-oven/GUI/GUI_interface.cpp
+1467923812 source:/home/valerio/reflow-oven/GUI/GUI_interface.cpp
 	"GUI_interface.h"
 
-1463433978 /home/valerio/reflow-oven/GUI/GUI_interface.h
+1467923812 /home/valerio/reflow-oven/GUI/GUI_interface.h
 	<wx/string.h>
 	<wx/button.h>
 	<wx/gdicmn.h>
@@ -11,9 +11,8 @@
 	<wx/settings.h>
 	<wx/choice.h>
 	<wx/sizer.h>
+	<wx/statline.h>
 	<wx/stattext.h>
-	<wx/textctrl.h>
-	<wx/valtext.h>
 	<wx/listctrl.h>
 	<wx/statusbr.h>
 	<wx/frame.h>
@@ -970,12 +969,12 @@
 
 1462040871 /usr/local/include/wx-3.0/wx/gtk/app.h
 
-1463435115 source:/home/valerio/reflow-oven/GUI/GUI_interface_extend.cpp
+1467920353 source:/home/valerio/reflow-oven/GUI/GUI_interface_extend.cpp
 	"GUI_interface_extend.h"
 	<wx/msgdlg.h>
 	"mathplot/mathplot.h"
 
-1463434326 /home/valerio/reflow-oven/GUI/GUI_interface_extend.h
+1467825217 /home/valerio/reflow-oven/GUI/GUI_interface_extend.h
 	<wx/string.h>
 	<wx/choice.h>
 	<wx/gdicmn.h>
@@ -986,6 +985,7 @@
 	<wx/sizer.h>
 	<wx/frame.h>
 	<wx/string.h>
+	<wx/timer.h>
 	"GUI_interface.h"
 	"communication.h"
 	"libctb-0.16/include/portscan.h"
@@ -1114,12 +1114,14 @@
 
 1462040871 /usr/local/include/wx-3.0/wx/gtk/msgdlg.h
 
-1462645280 /home/valerio/reflow-oven/GUI/communication.h
+1467925472 /home/valerio/reflow-oven/GUI/communication.h
 	"libctb-0.16/include/ctb.h"
 	<wx/msgdlg.h>
+	<wx/timer.h>
 
-1462645442 source:/home/valerio/reflow-oven/GUI/communication.cpp
+1467925522 source:/home/valerio/reflow-oven/GUI/communication.cpp
 	"communication.h"
+	<sstream>
 
 1462639078 /home/valerio/reflow-oven/GUI/portscan.h
 	<string.h>
@@ -1458,4 +1460,35 @@
 1463002605 /home/valerio/reflow-oven/GUI/GUI_graph_extend.h
 	"GUI_interface.h"
 	"mathplot/mathplot.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/statline.h
+	"wx/defs.h"
+	"wx/control.h"
+	"wx/univ/statline.h"
+	"wx/msw/statline.h"
+	"wx/gtk/statline.h"
+	"wx/gtk1/statline.h"
+	"wx/os2/statline.h"
+	"wx/osx/statline.h"
+	"wx/cocoa/statline.h"
+	"wx/generic/statline.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/statline.h
+	"wx/defs.h"
+
+1462040869 /usr/local/include/wx-3.0/wx/timer.h
+	"wx/defs.h"
+	"wx/object.h"
+	"wx/longlong.h"
+	"wx/event.h"
+	"wx/stopwatch.h"
+	"wx/utils.h"
+
+1462040869 /usr/local/include/wx-3.0/wx/stopwatch.h
+	"wx/defs.h"
+	"wx/longlong.h"
+	"wx/time.h"
+
+1462040869 /usr/local/include/wx-3.0/wx/time.h
+	"wx/longlong.h"
 

@@ -23,7 +23,7 @@ unsigned char PCD8544_UpdateXmin = 0, PCD8544_UpdateXmax = 0, PCD8544_UpdateYmin
 unsigned char PCD8544_x;
 unsigned char PCD8544_y;
 
-SPI_HandleTypeDef hSPI;
+static SPI_HandleTypeDef hSPI;
 TIM_HandleTypeDef hTIM;
 
 //Fonts 5x7
@@ -256,7 +256,7 @@ void PCD8544_InitIO(void) {
 	PCD8544_CLK_CLKEN();
 	PCD8544_RST_CLKEN();
 	PCD8544_DC_CLKEN();
-	PCD8544_BKL_CLKEN();
+//	PCD8544_BKL_CLKEN();
 
 	// Control pins
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -287,12 +287,12 @@ void PCD8544_InitIO(void) {
 	HAL_GPIO_Init(PCD8544_DIN_PORT, &GPIO_InitStruct);
 
 	// Backlight pin
-	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-	GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
-	GPIO_InitStruct.Pin = PCD8544_BKL_PIN;
-	HAL_GPIO_Init(PCD8544_BKL_PORT, &GPIO_InitStruct);
+//	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+//	GPIO_InitStruct.Pull = GPIO_NOPULL;
+//	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+//	GPIO_InitStruct.Alternate = GPIO_AF2_TIM4;
+//	GPIO_InitStruct.Pin = PCD8544_BKL_PIN;
+//	HAL_GPIO_Init(PCD8544_BKL_PORT, &GPIO_InitStruct);
 
 	// Timer4 initialization
 	__TIM4_CLK_ENABLE();

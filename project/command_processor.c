@@ -25,9 +25,11 @@ typedef struct{
 // Here's the list of the allowed commands
 CONSOLE_COMMAND allowed_commands[] = {
 		{"add_reflow_point", add_reflow_point},
-		{"get_reflow_list", get_reflow_list},
+		{"get_reflow_point", get_reflow_point},
 		{"clear_reflow_list", clear_reflow_list},
-		{"start_stop_reflow_process", start_stop_reflow_process},
+		{"set_PID_parameters", set_PID_parameters},
+		{"stop_reflow_process", stop_reflow_process},
+		{"start_reflow_process", start_reflow_process},
 		{"test", test},
 		{NULL, NULL}
 };
@@ -61,7 +63,7 @@ int cmd_proc_receive_data(uint8_t* Data, uint32_t *Len)
 			single_line[current_pos] = '\0';
 			// Process the line just received
 			if (process_line() != 0)
-				USB_printf("Error\n");
+				USB_printf_buff("Error\n");
 			break;
 		default:
 			// Copy the received data to the local buffer (if the buffer has not yet reached
@@ -83,7 +85,7 @@ int cmd_proc_receive_data(uint8_t* Data, uint32_t *Len)
  */
 static int process_line(void)
 {
-	char *funct;
+	char *funct = NULL;
 	char *args[MAX_ARGS_NUM];
 	char *token;
 	int argc = 0;
@@ -98,12 +100,12 @@ static int process_line(void)
 			return -1;
 		}
 
-		if (argc == 0){
+		if (funct == NULL){
 			// the first element of the line is the function
 			funct = token;
 		}else{
 			// the other elements are the parameters
-			args[argc-1] = token;
+			args[argc] = token;
 			argc++;
 		}
 		token = strtok(NULL, separator);
@@ -134,5 +136,6 @@ static int process_line(void)
  */
 static int test(int argc, char *argv[])
 {
-	USB_printf("OK\n");
+	USB_printf_buff("OK\n");
+	return 0;
 }

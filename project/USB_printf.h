@@ -14,5 +14,6 @@
 
 int USB_printf(const char *format, ...);
 int USB_printf_buff(const char *format, ...);
+int PCD8544_printf_buff(const char *format, ...);
 
 #endif /* PRINTF_STDARG_H_ */

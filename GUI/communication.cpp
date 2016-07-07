@@ -1,11 +1,16 @@
 
 #include "communication.h"
+#include <sstream>
 
-// Define some basic communication parameters
-const int Communication::baudrate = 115200;
-const char* Communication::protocol = "8N1";
-const ctb::SerialPort::FlowControl Communication::flowControl = ctb::SerialPort::NoFlowControl;
-const int Communication::timeout = 1000;
+// Virtual serial port defines
+#define SERIAL_PORT_BAUDRATE        115200
+#define SERIAL_PROTOCOL             "8N1"
+#define SERIAL_FLOW_CONTROL         ctb::SerialPort::NoFlowControl
+#define SERIAL_TIMEOUT              2000    // milliseconds
+#define SERIAL_EOS_CHAR             (char*)"\n"
+// Reflow process defines
+#define REFLOW_SCAN_TIMEOUT     2000    // milliseconds. It's the maximum interval between STM32's temperature redings before declaring a timeout
+
 
 /**
  *  @brief  Constructor
@@ -33,7 +38,7 @@ Communication::~Communication()
 int Communication::connect(const char* portname)
 {
     // Try to open the selected COM port
-    int ret = this->Open(portname, this->baudrate, this->protocol, this->flowControl);
+    int ret = this->Open(portname, SERIAL_PORT_BAUDRATE, SERIAL_PROTOCOL, SERIAL_FLOW_CONTROL);
 
     if (ret == 0){
         // In case it fails return an error
@@ -69,33 +74,78 @@ void Communication::disconnect()
  */
 int Communication::test_communication()
 {
-    // Define Tx and Rx test buffers
-    std::string test_string("test\n");
-    char* ret_string;
-    int ret_val;
+    std::stringstream cmd;
+    cmd << "test\n";
+    return this->send_command(cmd.str());
+}
 
-    // Try to send test_string
-    ret_val = this->Writev((char*)test_string.c_str(), test_string.length(), this->timeout);
-    if ( (unsigned)ret_val != test_string.length()){
+int Communication::get_reflow_point(float& time, float& temperature)
+{
+    time = 0.0;
+    temperature = 0.0;
+    return 0;
+}
+
+int Communication::add_reflow_point(wxString& time, wxString& temperature)
+{
+    std::stringstream cmd;
+    cmd << "add_reflow_point " << time << " " << temperature << "\n";
+    return this->send_command(cmd.str());
+}
+
+int Communication::clear_reflow_list()
+{
+    std::stringstream cmd;
+    cmd << "clear_reflow_list\n";
+    return this->send_command(cmd.str());
+}
+
+int Communication::set_PID_parameters(unsigned int element, wxString& P_coeff, wxString& I_coeff, wxString& D_coeff)
+{
+    std::stringstream cmd;
+    cmd << "set_PID_parameters " << element << " " << P_coeff << " " << I_coeff << " " << D_coeff << "\n";
+    return this->send_command(cmd.str());
+}
+
+int Communication::start_reflow_process()
+{
+    std::stringstream cmd;
+    cmd << "start_reflow_process\n";
+    return this->send_command(cmd.str());
+}
+
+int Communication::stop_reflow_process()
+{
+    std::stringstream cmd;
+    cmd << "stop_reflow_process\n";
+    return this->send_command(cmd.str());
+}
+
+int Communication::send_command(std::string cmd)
+{
+    int ret_val;
+    char* ret_string;
+
+    // Try to send the command
+    ret_val = this->Writev((char*)cmd.c_str(), cmd.length(), SERIAL_TIMEOUT);
+    if ( (unsigned)ret_val != cmd.length()){
         // If the sent data was less than expected then return error
+        this->disconnect();
+        return -1;
+    }
+
+    // Check if something was returned from the microcontroller
+    size_t readed_bytes;
+    ret_val = this->ReadUntilEOS(ret_string, &readed_bytes, SERIAL_EOS_CHAR, SERIAL_TIMEOUT);
+    if ( ret_val == 0){
+        // Nothing was returned before the timeout, so return an error
         this->disconnect();
         return -2;
     }
 
-    // Test if something was returned from the microcontroller
-//    ret_val = this->Readv(receiveBuf, sizeof(receiveBuf)-1, this->timeout);
-    size_t readed_bytes;
-
-    ret_val = this->ReadUntilEOS(ret_string, &readed_bytes);
-    if ( ret_val == 0){
-        // Nothing was returned before the timeout, so return an error
-        this->disconnect();
-        return -3;
-    }
-
     if ( strcmp(ret_string,"OK") != 0 ){
         this->disconnect();
-        return -4;
+        return -3;
     }
 
     return 0;

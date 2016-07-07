@@ -8,14 +8,22 @@
 #include "SSR.h"
 #include "MAX31855.h"
 #include "reflow_process.h"
+#include "USB_printf.h"
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
 // Private defines
-#define MAIN_LOOP_PERIOD 	100 	// Delay in ms between two consecutive main loop's iterations
+#define MAIN_LOOP_PERIOD 	1000 	// Delay in ms between two consecutive main loop's iterations
 
+typedef enum {
+	WAITING_FOR_USB_CONNECTION,
+	USB_CONNECTED
+} MAIN_LOOP_STATUS;
 
+/**
+ * Main loop
+ */
 int main(void)
 {
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -36,54 +44,86 @@ int main(void)
 
 	/* Configure the LCD */
 	PCD8544_Init(0x38);
-	PCD8544_GotoXY(0,0);
-	PCD8544_Puts("    Welcome    ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-	PCD8544_GotoXY(0,10);
-	PCD8544_Puts("    to  the    ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-	PCD8544_GotoXY(0,20);
-	PCD8544_Puts("  reflow oven  ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
-	PCD8544_Refresh();
 
 	/* Initialize the SSR's PWM */
 	SSR_init();
-	SSR_set_duty_cycle(SSR_MAX_DUTY/2);
+	SSR_set_duty_cycle(SENSOR_1, SSR_MIN_DUTY);
+	SSR_set_duty_cycle(SENSOR_2, SSR_MIN_DUTY);
 	SSR_start();
 
-	/* Infinite loop */
-	uint16_t tmp = 1;
-	uint8_t direction = 1; // 1 is for upcounting; 0 for downcounting
+	/* Initialize the MAX31855 */
+	MAX31855_init();
 
+	uint32_t start_tick = HAL_GetTick();	// Get the start tick value
+	uint32_t next_tick;
+
+	float thermo_temp_float, int_temp_float;
+	int thermo_temp_int, int_temp_int;
+	uint8_t status;
+
+	/* Infinite loop */
 	while (1)
 	{
-		// Call the reflow process every time. If it's not running it will
-		// return immediately.
-		reflow_process(MAIN_LOOP_PERIOD);
+		// Get the tick value at the beginning of the main loop
+		start_tick = HAL_GetTick();
 
 		// Use LED4 to signal if the USB device is connected or not
-		if (hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED){
-		  BSP_LED_On(LED4);
-		}else{
-		  BSP_LED_Off(LED4);
+		if (hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED)
+		{
+			// Signal that the USB is correctly configured
+			BSP_LED_On(LED4);
+
+			// Call the reflow process every time. If it's not running it will
+			// return immediately.
+			reflow_process(MAIN_LOOP_PERIOD);
+
+			// Print temperature data on the LCD
+			PCD8544_Clear();
+
+			status = MAX31855_read(SENSOR_1, &thermo_temp_float, &int_temp_float);
+			thermo_temp_int = thermo_temp_float; // Convert to integer
+			int_temp_int = int_temp_float;  // Convert to integer
+			PCD8544_GotoXY(0,0);
+			PCD8544_printf_buff("Thermo1 = %d", thermo_temp_int);
+			PCD8544_GotoXY(0,10);
+			PCD8544_printf_buff("Intern1 = %d", int_temp_int);
+
+			status = MAX31855_read(SENSOR_2, &thermo_temp_float, &int_temp_float);
+			thermo_temp_int = thermo_temp_float; // Convert to integer
+			int_temp_int = int_temp_float;  // Convert to integer
+			PCD8544_GotoXY(0,20);
+			PCD8544_printf_buff("Thermo2 = %d", thermo_temp_int);
+			PCD8544_GotoXY(0,30);
+			PCD8544_printf_buff("Intern2 = %d", int_temp_int);
+
+			PCD8544_Refresh();
+		}
+		else
+		{
+			// Signal that the USB is not connected
+			BSP_LED_Off(LED4);
+
+			// Force the reflow process to stop
+			stop_reflow_process(0, NULL);
+
+			// Print a warning message on the LCD
+			PCD8544_Clear();
+			PCD8544_GotoXY(0,0);
+			PCD8544_Puts(" Waiting for   ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+			PCD8544_GotoXY(0,10);
+			PCD8544_Puts(" USB           ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
+			PCD8544_Refresh();
+
+			// Turn off the SSR (debug phase)
+			SSR_set_duty_cycle(SENSOR_1, SSR_MIN_DUTY);
+			SSR_set_duty_cycle(SENSOR_2, SSR_MIN_DUTY);
 		}
 
 		// Just blink LED5 to signal that the main process is still alive
 		BSP_LED_Toggle(LED5);
 
-		// Test the SSR module with an LED (debug phase)
-		SSR_set_duty_cycle(tmp);
-		if (direction){
-		  tmp = tmp << 1;
-		}else{
-		  tmp = tmp >> 1;
-		}
-		if (tmp == 0x8000)
-		  direction = 0;
-
-		if (tmp == 0x0001)
-		  direction = 1;
-
 		// Wait for the predefined amount of time before the next iteration
-		HAL_Delay(MAIN_LOOP_PERIOD);
+		while ((HAL_GetTick()-start_tick) < MAIN_LOOP_PERIOD);
 	}
 }
 

@@ -1,9 +1,11 @@
 
 #include "USB_printf.h"
+#include "pcd8544.h"
 
 // Macros
-#define put_string(_text_, _size_) 		CDC_Transmit_FS(_text_, sizeof(_size_))
-#define put_char(c) 					CDC_Transmit_FS((uint8_t*)c, 1)
+#define USB_put_string(_text_, _size_) 		CDC_Transmit_FS(_text_, _size_)
+#define USB_put_char(c) 					CDC_Transmit_FS((uint8_t*)c, 1)
+#define PCD8544_put_string(_text_)			PCD8544_Puts(_text_, PCD8544_Pixel_Set, PCD8544_FontSize_5x7)
 
 // Local variables
 #define OUTPUT_BUFFER_SIZE		1024		// Size of the output buffer
@@ -16,7 +18,7 @@ static void printchar(char **str, char c)
 		**str = c;
 		++(*str);
 	} else {
-		put_char(&c);
+		while(USB_put_char(&c) != USBD_OK);
 	}
 }
 
@@ -173,13 +175,29 @@ int USB_printf(const char *format, ...)
 int USB_printf_buff(const char *format, ...)
 {
 	int written_chars;
+	char* p_output_buffer = &output_buffer[0];
 
 	va_list args;
 	va_start( args, format );
 	// First print the string to the local output buffer
-	written_chars = print((char**) &output_buffer, format, args );
+	written_chars = print(&p_output_buffer, format, args );
 	// Then send it to the output
-	put_string(output_buffer, written_chars);
+	while(USB_put_string(output_buffer, written_chars) == USBD_BUSY);
+
+	return written_chars;
+}
+
+int PCD8544_printf_buff(const char *format, ...)
+{
+	int written_chars;
+	char* p_output_buffer = &output_buffer[0];
+
+	va_list args;
+	va_start( args, format );
+	// First print the string to the local output buffer
+	written_chars = print(&p_output_buffer, format, args );
+	// Then send it to the output
+	PCD8544_put_string(output_buffer);
 
 	return written_chars;
 }

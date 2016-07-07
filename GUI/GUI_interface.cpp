@@ -34,6 +34,9 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	bSizer9->Add( bSizer2, 1, wxEXPAND|wxBOTTOM, 5 );
 	
+	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer9->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
+	
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
 	
@@ -41,17 +44,19 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_staticText3->Wrap( -1 );
 	bSizer6->Add( m_staticText3, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	time_text = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	time_text->SetMaxLength( 4 ); 
-	bSizer6->Add( time_text, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	wxArrayString time_choiceChoices;
+	time_choice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, time_choiceChoices, 0 );
+	time_choice->SetSelection( 0 );
+	bSizer6->Add( time_choice, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Temperature [°C]"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
 	bSizer6->Add( m_staticText4, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	temp_text = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	temp_text->SetMaxLength( 4 ); 
-	bSizer6->Add( temp_text, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	wxArrayString temp_choiceChoices;
+	temp_choice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, temp_choiceChoices, 0 );
+	temp_choice->SetSelection( 0 );
+	bSizer6->Add( temp_choice, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	insert_point_btn = new wxButton( this, wxID_ANY, wxT("Insert Point"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( insert_point_btn, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
@@ -81,13 +86,91 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	bSizer9->Add( bSizer3, 1, wxBOTTOM|wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
-	wxBoxSizer* bSizer4;
-	bSizer4 = new wxBoxSizer( wxHORIZONTAL );
+	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer9->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
 	
-	start = new wxButton( this, wxID_ANY, wxT("Start"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer4->Add( start, 1, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	wxBoxSizer* bSizer8;
+	bSizer8 = new wxBoxSizer( wxHORIZONTAL );
 	
-	bSizer9->Add( bSizer4, 1, wxEXPAND, 5 );
+	wxGridSizer* gSizer1;
+	gSizer1 = new wxGridSizer( 3, 2, 0, 0 );
+	
+	m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("Product"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5->Wrap( -1 );
+	gSizer1->Add( m_staticText5, 0, wxALL, 5 );
+	
+	wxArrayString P_choice_1Choices;
+	P_choice_1 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, P_choice_1Choices, 0 );
+	P_choice_1->SetSelection( 0 );
+	gSizer1->Add( P_choice_1, 0, wxALL, 5 );
+	
+	m_staticText6 = new wxStaticText( this, wxID_ANY, wxT("Integral"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6->Wrap( -1 );
+	gSizer1->Add( m_staticText6, 0, wxALL, 5 );
+	
+	wxArrayString I_choice_1Choices;
+	I_choice_1 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, I_choice_1Choices, 0 );
+	I_choice_1->SetSelection( 0 );
+	gSizer1->Add( I_choice_1, 0, wxALL, 5 );
+	
+	m_staticText7 = new wxStaticText( this, wxID_ANY, wxT("Derivative"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText7->Wrap( -1 );
+	gSizer1->Add( m_staticText7, 0, wxALL, 5 );
+	
+	wxArrayString D_choice_1Choices;
+	D_choice_1 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, D_choice_1Choices, 0 );
+	D_choice_1->SetSelection( 0 );
+	gSizer1->Add( D_choice_1, 0, wxALL, 5 );
+	
+	bSizer8->Add( gSizer1, 1, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	wxGridSizer* gSizer11;
+	gSizer11 = new wxGridSizer( 3, 2, 0, 0 );
+	
+	m_staticText51 = new wxStaticText( this, wxID_ANY, wxT("Product"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText51->Wrap( -1 );
+	gSizer11->Add( m_staticText51, 0, wxALL, 5 );
+	
+	wxArrayString P_choice_2Choices;
+	P_choice_2 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, P_choice_2Choices, 0 );
+	P_choice_2->SetSelection( 0 );
+	gSizer11->Add( P_choice_2, 0, wxALL, 5 );
+	
+	m_staticText61 = new wxStaticText( this, wxID_ANY, wxT("Integral"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText61->Wrap( -1 );
+	gSizer11->Add( m_staticText61, 0, wxALL, 5 );
+	
+	wxArrayString I_choice_2Choices;
+	I_choice_2 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, I_choice_2Choices, 0 );
+	I_choice_2->SetSelection( 0 );
+	gSizer11->Add( I_choice_2, 0, wxALL, 5 );
+	
+	m_staticText71 = new wxStaticText( this, wxID_ANY, wxT("Derivative"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText71->Wrap( -1 );
+	gSizer11->Add( m_staticText71, 0, wxALL, 5 );
+	
+	wxArrayString D_choice_2Choices;
+	D_choice_2 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, D_choice_2Choices, 0 );
+	D_choice_2->SetSelection( 0 );
+	gSizer11->Add( D_choice_2, 0, wxALL, 5 );
+	
+	bSizer8->Add( gSizer11, 1, wxEXPAND, 5 );
+	
+	bSizer9->Add( bSizer8, 1, wxEXPAND, 5 );
+	
+	m_staticline3 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer9->Add( m_staticline3, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer71;
+	bSizer71 = new wxBoxSizer( wxHORIZONTAL );
+	
+	stop_btn = new wxButton( this, wxID_ANY, wxT("Stop"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer71->Add( stop_btn, 1, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	
+	start_btn = new wxButton( this, wxID_ANY, wxT("Start"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer71->Add( start_btn, 1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	
+	bSizer9->Add( bSizer71, 1, wxEXPAND, 5 );
 	
 	top_sizer->Add( bSizer9, 1, wxEXPAND, 5 );
 	
@@ -101,6 +184,8 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	insert_point_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::insert_point ), NULL, this );
 	remove_point_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::remove_point ), NULL, this );
 	clear_list_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::clear_list ), NULL, this );
+	stop_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::stop ), NULL, this );
+	start_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::start ), NULL, this );
 }
 
 GUI_frame::~GUI_frame()
@@ -111,4 +196,6 @@ GUI_frame::~GUI_frame()
 	insert_point_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::insert_point ), NULL, this );
 	remove_point_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::remove_point ), NULL, this );
 	clear_list_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::clear_list ), NULL, this );
+	stop_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::stop ), NULL, this );
+	start_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::start ), NULL, this );
 }

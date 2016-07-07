@@ -11,6 +11,7 @@
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_tim.h"
+#include "MAX31855.h"
 
 // Public defines
 #define	SSR_MAX_DUTY	60000
@@ -20,6 +21,6 @@
 void SSR_init();
 void SSR_start();
 void SSR_stop();
-void SSR_set_duty_cycle(uint16_t duty);
+void SSR_set_duty_cycle(SENSOR_ID id, uint16_t duty);
 
 #endif /* SSR_H_ */
