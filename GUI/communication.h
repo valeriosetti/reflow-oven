@@ -26,6 +26,7 @@ class Communication :  public ctb::SerialPort
         int set_PID_parameters(unsigned int element, wxString& P_coeff, wxString& I_coeff, wxString& D_coeff);
         int start_reflow_process(void);
         int stop_reflow_process(void);
+        int set_reflow_process_period(wxString& period);
 };
 
 #endif // COMMUNICATION_H_INCLUDED

@@ -13,8 +13,8 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
-// Private defines
-#define MAIN_LOOP_PERIOD 	1000 	// Delay in ms between two consecutive main loop's iterations
+/* Private variables */
+uint32_t main_loop_period = 1000; // Delay in ms between two consecutive main loop's iterations
 
 typedef enum {
 	WAITING_FOR_USB_CONNECTION,
@@ -49,7 +49,7 @@ int main(void)
 	SSR_init();
 	SSR_set_duty_cycle(SENSOR_1, SSR_MIN_DUTY);
 	SSR_set_duty_cycle(SENSOR_2, SSR_MIN_DUTY);
-	SSR_start();
+	SSR_stop();
 
 	/* Initialize the MAX31855 */
 	MAX31855_init();
@@ -75,28 +75,7 @@ int main(void)
 
 			// Call the reflow process every time. If it's not running it will
 			// return immediately.
-			reflow_process(MAIN_LOOP_PERIOD);
-
-			// Print temperature data on the LCD
-			PCD8544_Clear();
-
-			status = MAX31855_read(SENSOR_1, &thermo_temp_float, &int_temp_float);
-			thermo_temp_int = thermo_temp_float; // Convert to integer
-			int_temp_int = int_temp_float;  // Convert to integer
-			PCD8544_GotoXY(0,0);
-			PCD8544_printf_buff("Thermo1 = %d", thermo_temp_int);
-			PCD8544_GotoXY(0,10);
-			PCD8544_printf_buff("Intern1 = %d", int_temp_int);
-
-			status = MAX31855_read(SENSOR_2, &thermo_temp_float, &int_temp_float);
-			thermo_temp_int = thermo_temp_float; // Convert to integer
-			int_temp_int = int_temp_float;  // Convert to integer
-			PCD8544_GotoXY(0,20);
-			PCD8544_printf_buff("Thermo2 = %d", thermo_temp_int);
-			PCD8544_GotoXY(0,30);
-			PCD8544_printf_buff("Intern2 = %d", int_temp_int);
-
-			PCD8544_Refresh();
+			reflow_process(main_loop_period);
 		}
 		else
 		{
@@ -123,7 +102,7 @@ int main(void)
 		BSP_LED_Toggle(LED5);
 
 		// Wait for the predefined amount of time before the next iteration
-		while ((HAL_GetTick()-start_tick) < MAIN_LOOP_PERIOD);
+		while ((HAL_GetTick()-start_tick) < main_loop_period);
 	}
 }
 
@@ -166,22 +145,8 @@ void SystemClock_Config(void)
 }
 
 
-#ifdef USE_FULL_ASSERT
-
-/**
-   * @brief Reports the name of the source file and the source line number
-   * where the assert_param error has occurred.
-   * @param file: pointer to the source file name
-   * @param line: assert_param error line source number
-   * @retval None
-   */
-void assert_failed(uint8_t* file, uint32_t line)
+int set_reflow_process_period(int argc, char *argv[])
 {
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-    ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-
+	main_loop_period = atoi(argv[0]);
+	USB_printf_buff("OK\n");
 }
-
-#endif

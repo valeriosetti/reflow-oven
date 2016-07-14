@@ -96,6 +96,13 @@ int start_reflow_process(int argc, char *argv[])
 	previous_error = 0.0;
 
 	reflow_process_enabled = 1;
+
+	// Set SSRs' PWMs to the minimum value, but enable them
+	SSR_set_duty_cycle(SENSOR_1, SSR_MIN_DUTY);
+	SSR_set_duty_cycle(SENSOR_2, SSR_MIN_DUTY);
+	SSR_start();
+
+	USB_printf_buff("OK\n");
 }
 
 /**
@@ -109,11 +116,14 @@ int stop_reflow_process(int argc, char *argv[])
 	// Turn off the SSR
 	SSR_set_duty_cycle(SENSOR_1, SSR_MIN_DUTY);
 	SSR_set_duty_cycle(SENSOR_2, SSR_MIN_DUTY);
+	SSR_stop();
 
 	// Reset global variables
 	reflow_process_tick = 0;
 	integral_error = 0.0;
 	previous_error = 0.0;
+
+	USB_printf_buff("OK\n");
 }
 
 /**
@@ -160,9 +170,7 @@ void reflow_process(uint32_t tick_interval)
 
 	// In case of any error from thermocouples, then stop the process
 	if (status != 0) {
-		reflow_process_enabled = 0;
-		SSR_set_duty_cycle(SENSOR_1, SSR_MIN_DUTY);
-		SSR_set_duty_cycle(SENSOR_2, SSR_MIN_DUTY);
+		stop_reflow_process(0, NULL);
 		USB_printf_buff("Error\n");
 		return;
 	}
@@ -182,6 +190,18 @@ void reflow_process(uint32_t tick_interval)
 						(int32_t) target_temp,
 						(int32_t) thermo_temp_1,
 						(int32_t) thermo_temp_2 );
+
+	// Print temperature data on the LCD
+	PCD8544_Clear();
+	PCD8544_GotoXY(0,0);
+	PCD8544_printf_buff("Tick = %d", reflow_process_tick);
+	PCD8544_GotoXY(0,10);
+	PCD8544_printf_buff("Target = %d", (int32_t)target_temp);
+	PCD8544_GotoXY(0,20);
+	PCD8544_printf_buff("Thermo1 = %d", (int32_t)thermo_temp_1);
+	PCD8544_GotoXY(0,30);
+	PCD8544_printf_buff("Thermo2 = %d", (int32_t)thermo_temp_2);
+	PCD8544_Refresh();
 
 	// Update the local tick count
 	reflow_process_tick += tick_interval;

@@ -17,6 +17,14 @@
 #define COEFFS_MIN_VALUE    0
 #define COEFFS_MAX_VALUE    10
 
+#define MIN_SCAN            250
+#define MAX_SCAN            2000
+#define SCAN_INTERVAL       250
+
+// Macros
+#define TRY(_expr_)     if ((_expr_)!=0) {wxMessageBox( wxT("Communication error"), wxT("Error"), wxICON_INFORMATION);  \
+                                            return;}
+
 /*
     Constructor
 */
@@ -66,6 +74,12 @@ GUI_frame_ext::GUI_frame_ext(wxWindow* parent)
     this->P_choice_2->SetSelection(0);
     this->I_choice_2->SetSelection(0);
     this->D_choice_2->SetSelection(0);
+
+    // Set allowed scan interval values into the proper choicebox
+    for (int scan_val=MIN_SCAN; scan_val<=MAX_SCAN; scan_val+=SCAN_INTERVAL) {
+        this->scan_choice->Append( wxString::Format(wxT("%d"), scan_val) );
+    }
+    this->time_choice->SetSelection(0);
 
     // Add the basic layers to the graph
     m_plot = new mpWindow( this, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER );
@@ -214,7 +228,7 @@ void GUI_frame_ext::remove_point( wxCommandEvent& event )
 void GUI_frame_ext::start( wxCommandEvent& event )
 {
     // Clear the reflow list which might be loaded into the STM32
-    STM32_device->clear_reflow_list();
+    TRY(STM32_device->clear_reflow_list());
 
     // Send data points to the STM32
     int num_items = this->points_list->GetItemCount();
@@ -232,7 +246,7 @@ void GUI_frame_ext::start( wxCommandEvent& event )
         this->points_list->GetItem(current_item);
         temperature = current_item.GetText();
 
-        STM32_device->add_reflow_point(time, temperature);
+        TRY(STM32_device->add_reflow_point(time, temperature));
     }
 
     // Send PIDs parameters
@@ -240,15 +254,20 @@ void GUI_frame_ext::start( wxCommandEvent& event )
     P_coeff = this->P_choice_1->GetString(this->P_choice_1->GetSelection());
     I_coeff = this->I_choice_1->GetString(this->I_choice_1->GetSelection());
     D_coeff = this->D_choice_1->GetString(this->D_choice_1->GetSelection());
-    STM32_device->set_PID_parameters(1, P_coeff, I_coeff, D_coeff);
+    TRY(STM32_device->set_PID_parameters(1, P_coeff, I_coeff, D_coeff));
 
     P_coeff = this->P_choice_2->GetString(this->P_choice_2->GetSelection());
     I_coeff = this->I_choice_2->GetString(this->I_choice_2->GetSelection());
     D_coeff = this->D_choice_2->GetString(this->D_choice_2->GetSelection());
-    STM32_device->set_PID_parameters(2, P_coeff, I_coeff, D_coeff);
+    TRY(STM32_device->set_PID_parameters(2, P_coeff, I_coeff, D_coeff));
+
+    // Set the reflow process period
+    wxString scan_interval;
+    scan_interval = this->scan_choice->GetString(this->scan_choice->GetSelection());
+    TRY(STM32_device->set_reflow_process_period(scan_interval));
 
     // Start the reflow process
-    STM32_device->start_reflow_process();
+    TRY(STM32_device->start_reflow_process());
 }
 
 /**

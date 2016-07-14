@@ -121,6 +121,13 @@ int Communication::stop_reflow_process()
     return this->send_command(cmd.str());
 }
 
+int Communication::set_reflow_process_period(wxString& period)
+{
+    std::stringstream cmd;
+    cmd << "set_reflow_process_period " << period << "\n";
+    return this->send_command(cmd.str());
+}
+
 int Communication::send_command(std::string cmd)
 {
     int ret_val;

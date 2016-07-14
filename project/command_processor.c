@@ -30,6 +30,7 @@ CONSOLE_COMMAND allowed_commands[] = {
 		{"set_PID_parameters", set_PID_parameters},
 		{"stop_reflow_process", stop_reflow_process},
 		{"start_reflow_process", start_reflow_process},
+		{"set_reflow_process_period", set_reflow_process_period},
 		{"test", test},
 		{NULL, NULL}
 };

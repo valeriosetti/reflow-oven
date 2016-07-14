@@ -32,13 +32,16 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	connect = new wxButton( this, wxID_ANY, wxT("Connect"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer2->Add( connect, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	bSizer9->Add( bSizer2, 1, wxEXPAND|wxBOTTOM, 5 );
+	bSizer9->Add( bSizer2, 0, wxEXPAND|wxBOTTOM, 5 );
 	
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer9->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
 	
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
+	
+	
+	bSizer6->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Time [s]"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText3->Wrap( -1 );
@@ -61,7 +64,10 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	insert_point_btn = new wxButton( this, wxID_ANY, wxT("Insert Point"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer6->Add( insert_point_btn, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	bSizer9->Add( bSizer6, 1, wxEXPAND|wxBOTTOM, 5 );
+	
+	bSizer6->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	bSizer9->Add( bSizer6, 0, wxEXPAND|wxBOTTOM, 5 );
 	
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxHORIZONTAL );
@@ -129,7 +135,7 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_staticText51 = new wxStaticText( this, wxID_ANY, wxT("Product"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText51->Wrap( -1 );
-	gSizer11->Add( m_staticText51, 0, wxALL, 5 );
+	gSizer11->Add( m_staticText51, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	wxArrayString P_choice_2Choices;
 	P_choice_2 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, P_choice_2Choices, 0 );
@@ -138,7 +144,7 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_staticText61 = new wxStaticText( this, wxID_ANY, wxT("Integral"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText61->Wrap( -1 );
-	gSizer11->Add( m_staticText61, 0, wxALL, 5 );
+	gSizer11->Add( m_staticText61, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	wxArrayString I_choice_2Choices;
 	I_choice_2 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, I_choice_2Choices, 0 );
@@ -147,19 +153,42 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_staticText71 = new wxStaticText( this, wxID_ANY, wxT("Derivative"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText71->Wrap( -1 );
-	gSizer11->Add( m_staticText71, 0, wxALL, 5 );
+	gSizer11->Add( m_staticText71, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
 	wxArrayString D_choice_2Choices;
 	D_choice_2 = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, D_choice_2Choices, 0 );
 	D_choice_2->SetSelection( 0 );
 	gSizer11->Add( D_choice_2, 0, wxALL, 5 );
 	
-	bSizer8->Add( gSizer11, 1, wxEXPAND, 5 );
+	bSizer8->Add( gSizer11, 1, wxALIGN_CENTER_VERTICAL, 5 );
 	
-	bSizer9->Add( bSizer8, 1, wxEXPAND, 5 );
+	bSizer9->Add( bSizer8, 0, wxEXPAND, 5 );
 	
 	m_staticline3 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizer9->Add( m_staticline3, 0, wxEXPAND | wxALL, 5 );
+	
+	wxBoxSizer* bSizer91;
+	bSizer91 = new wxBoxSizer( wxHORIZONTAL );
+	
+	
+	bSizer91->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	m_staticText10 = new wxStaticText( this, wxID_ANY, wxT("Reflow process scan interval [ms]"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText10->Wrap( -1 );
+	bSizer91->Add( m_staticText10, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	wxArrayString scan_choiceChoices;
+	scan_choice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, scan_choiceChoices, 0 );
+	scan_choice->SetSelection( 0 );
+	bSizer91->Add( scan_choice, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	
+	bSizer91->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	bSizer9->Add( bSizer91, 0, wxEXPAND, 5 );
+	
+	m_staticline4 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	bSizer9->Add( m_staticline4, 0, wxEXPAND | wxALL, 5 );
 	
 	wxBoxSizer* bSizer71;
 	bSizer71 = new wxBoxSizer( wxHORIZONTAL );
@@ -170,7 +199,7 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	start_btn = new wxButton( this, wxID_ANY, wxT("Start"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer71->Add( start_btn, 1, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
 	
-	bSizer9->Add( bSizer71, 1, wxEXPAND, 5 );
+	bSizer9->Add( bSizer71, 0, wxEXPAND, 5 );
 	
 	top_sizer->Add( bSizer9, 1, wxEXPAND, 5 );
 	

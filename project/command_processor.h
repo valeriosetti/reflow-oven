@@ -16,6 +16,7 @@
 #include "string.h"
 #include "reflow_process.h"
 #include "USB_printf.h"
+#include "main.h"
 
 // Public functions
 int cmd_proc_receive_data(uint8_t* Data, uint32_t *Len);

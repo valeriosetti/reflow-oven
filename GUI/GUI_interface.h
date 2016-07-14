@@ -38,11 +38,13 @@ class GUI_frame : public wxFrame
 		wxChoice* m_choice1;
 		wxButton* connect;
 		wxStaticLine* m_staticline1;
+		
 		wxStaticText* m_staticText3;
 		wxChoice* time_choice;
 		wxStaticText* m_staticText4;
 		wxChoice* temp_choice;
 		wxButton* insert_point_btn;
+		
 		wxStaticText* m_staticText2;
 		wxListCtrl* points_list;
 		wxButton* remove_point_btn;
@@ -61,6 +63,11 @@ class GUI_frame : public wxFrame
 		wxStaticText* m_staticText71;
 		wxChoice* D_choice_2;
 		wxStaticLine* m_staticline3;
+		
+		wxStaticText* m_staticText10;
+		wxChoice* scan_choice;
+		
+		wxStaticLine* m_staticline4;
 		wxButton* stop_btn;
 		wxButton* start_btn;
 		wxStatusBar* status_bar;
