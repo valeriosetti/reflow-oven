@@ -25,14 +25,21 @@
 #include <sstream>
 #include <wx/msgdlg.h>
 
-class GUI_frame_ext : public GUI_frame
+class GUI_frame_ext : public GUI_frame, wxTimer
 {
 	private:
         Communication* STM32_device;
+        long reflow_process_scan_interval;
         mpWindow* m_plot;
+        mpFXYVector* selected_point_layer;
+        mpFXYVector* thermocouple1_layer;
+        mpFXYVector* thermocouple2_layer;
 
-        void update_graph();
+        void add_point_to_graph(mpFXYVector* layer, float x, float y);
+        // void remove_point_to_graph(mpFXYVector* layer, float x, float y); // TODO
+        void reset_graph(mpFXYVector* layer);
         void ChildNotifiesConnection(bool status);
+        void Notify();
 
 	protected:
 

@@ -32,7 +32,6 @@
 #define	MAX31855_CS2_PORT				GPIOA
 #define	MAX31855_CS2_PIN				GPIO_PIN_8
 #define	MAX31855_CS2_CLKEN				__GPIOA_CLK_ENABLE
-
 //// MOSI
 #define	MAX31855_MISO_PORT				GPIOB
 #define	MAX31855_MISO_PIN				GPIO_PIN_4
@@ -41,10 +40,6 @@
 #define	MAX31855_CLK_PORT				GPIOB
 #define	MAX31855_CLK_PIN				GPIO_PIN_3
 #define	MAX31855_CLK_CLKEN				__GPIOA_CLK_ENABLE
-//// CS for the LIS3DSH
-#define	LIS3DSH_CLK_PORT				GPIOE
-#define	LIS3DSH_CLK_PIN					GPIO_PIN_3
-#define	LIS3DSH_CLK_CLKEN				__GPIOE_CLK_ENABLE
 //// Shortcuts for pin handling
 #define MAX31855_CS1_LOW			HAL_GPIO_WritePin(MAX31855_CS1_PORT, MAX31855_CS1_PIN, GPIO_PIN_RESET)
 #define MAX31855_CS1_HIGH			HAL_GPIO_WritePin(MAX31855_CS1_PORT, MAX31855_CS1_PIN, GPIO_PIN_SET)
@@ -67,19 +62,13 @@ void MAX31855_init()
 {
 	GPIO_InitTypeDef 	GPIO_InitStruct;
 
-	// Disable the onboard MEMS sensor
+	// Configure the software controlled CS pins
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-	GPIO_InitStruct.Pin = LIS3DSH_CLK_PIN;
-	HAL_GPIO_Init(LIS3DSH_CLK_PORT, &GPIO_InitStruct);
-	HAL_GPIO_WritePin(LIS3DSH_CLK_PORT, LIS3DSH_CLK_PIN, GPIO_PIN_SET);
-
-	// Configure the software controlled CS pins
 	GPIO_InitStruct.Pin = MAX31855_CS1_PIN;
 	HAL_GPIO_Init(MAX31855_CS1_PORT, &GPIO_InitStruct);
 	MAX31855_CS1_HIGH;
-
 	GPIO_InitStruct.Pin = MAX31855_CS2_PIN;
 	HAL_GPIO_Init(MAX31855_CS2_PORT, &GPIO_InitStruct);
 	MAX31855_CS2_HIGH;

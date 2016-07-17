@@ -61,8 +61,9 @@
 /* USER CODE BEGIN PRIVATE_DEFINES */
 /* Define size for the receive and transmit buffer over CDC */
 /* It's up to user to redefine and/or remove those define */
-#define APP_RX_DATA_SIZE  4
-#define APP_TX_DATA_SIZE  4
+#define APP_RX_DATA_SIZE  512 	// in origin it was 4
+#define APP_TX_DATA_SIZE  512	// in origin it was 4
+//#define SERIAL_LOOPBACK_MODE
 /* USER CODE END PRIVATE_DEFINES */
 /**
   * @}
@@ -255,15 +256,20 @@ static int8_t CDC_Control_FS  (uint8_t cmd, uint8_t* pbuf, uint16_t length)
   */
 static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
 {
-  /* USER CODE BEGIN 6 */
-  USBD_CDC_SetRxBuffer(hUsbDevice_0, &Buf[0]);
-  USBD_CDC_ReceivePacket(hUsbDevice_0);
+	/* USER CODE BEGIN 6 */
+	USBD_CDC_SetRxBuffer(hUsbDevice_0, &Buf[0]);
+	USBD_CDC_ReceivePacket(hUsbDevice_0);
 
-  // Send the received data to our command processor
-  cmd_proc_receive_data(Buf, Len);
+	#if defined(SERIAL_LOOPBACK_MODE)
+		// This is for loopback mode
+		CDC_Transmit_FS(Buf, *Len);
+	#else
+		// Send the received data to our command processor
+		cmd_proc_receive_data(Buf, Len);
+	#endif
 
-  return (USBD_OK);
-  /* USER CODE END 6 */ 
+	return (USBD_OK);
+	/* USER CODE END 6 */
 }
 
 /**

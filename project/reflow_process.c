@@ -103,13 +103,27 @@ int start_reflow_process(int argc, char *argv[])
 	SSR_start();
 
 	USB_printf_buff("OK\n");
+	return 0;
 }
 
 /**
- *	@brief	Start the reflow process
+ *	@brief	This is the same as "private_stop_reflow_process", but returns
+ *			also a feedback through the virtualCOM.
  * 	@param	[none]
  */
 int stop_reflow_process(int argc, char *argv[])
+{
+	int ret_val = private_stop_reflow_process();
+	USB_printf_buff("OK\n");
+	return ret_val;
+}
+
+/**
+ *	@brief	This function stops the reflow process, but it's available
+ *			only to the STM32.
+ * 	@param	[none]
+ */
+int private_stop_reflow_process()
 {
 	reflow_process_enabled = 0;
 
@@ -123,7 +137,7 @@ int stop_reflow_process(int argc, char *argv[])
 	integral_error = 0.0;
 	previous_error = 0.0;
 
-	USB_printf_buff("OK\n");
+	return 0;
 }
 
 /**
@@ -155,25 +169,38 @@ int set_PID_parameters(int argc, char *argv[])
  */
 void reflow_process(uint32_t tick_interval)
 {
-	// If the reflow process isn't started yet, then return immediately
-	if (reflow_process_enabled == 0)
-		return;
-
 	float thermo_temp_1, internal_temp_1, thermo_temp_2, internal_temp_2;
 	float target_temp;
 	uint8_t status;
 	uint16_t SSR_duty;
+
+	// If the reflow process isn't started yet, then return immediately
+	if (reflow_process_enabled == 0) {
+		PCD8544_Clear();
+		status = MAX31855_read(SENSOR_1, &thermo_temp_1, &internal_temp_1);
+		PCD8544_GotoXY(0,0);
+		PCD8544_printf_buff("Thermo1 = %d", (int32_t)thermo_temp_1);
+		PCD8544_GotoXY(0,10);
+		PCD8544_printf_buff("Status1 = %x", status);
+		status = MAX31855_read(SENSOR_2, &thermo_temp_2, &internal_temp_2);
+		PCD8544_GotoXY(0,20);
+		PCD8544_printf_buff("Thermo2 = %d", (int32_t)thermo_temp_2);
+		PCD8544_GotoXY(0,30);
+		PCD8544_printf_buff("Status2 = %x", (int32_t)status);
+		PCD8544_Refresh();
+		return;
+	}
 
 	// Get a global status value from the two sensors
 	status = ( 	MAX31855_read(SENSOR_1, &thermo_temp_1, &internal_temp_1) ||
 				MAX31855_read(SENSOR_2, &thermo_temp_2, &internal_temp_2)  );
 
 	// In case of any error from thermocouples, then stop the process
-	if (status != 0) {
-		stop_reflow_process(0, NULL);
+	/*if (status != 0) {
+		private_stop_reflow_process();
 		USB_printf_buff("Error\n");
 		return;
-	}
+	}*/
 
 	// Compute the next desired temperature for the current time (it's also converted to float)
 	target_temp = compute_target_temp(reflow_process_tick);
@@ -208,7 +235,7 @@ void reflow_process(uint32_t tick_interval)
 
 	// If the next iteration is over the last reflow point then stop the process
 	if (reflow_process_tick > reflow_list[reflow_list_size-1].milliseconds) {
-		stop_reflow_process(0, NULL);
+		private_stop_reflow_process();
 		USB_printf_buff("Stop\n");
 	}
 }

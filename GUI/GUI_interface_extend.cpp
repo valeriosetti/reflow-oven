@@ -23,6 +23,7 @@
 
 // Macros
 #define TRY(_expr_)     if ((_expr_)!=0) {wxMessageBox( wxT("Communication error"), wxT("Error"), wxICON_INFORMATION);  \
+                                            this->status_bar->SetStatusText(wxString("Disconnected"));                  \
                                             return;}
 
 /*
@@ -79,14 +80,33 @@ GUI_frame_ext::GUI_frame_ext(wxWindow* parent)
     for (int scan_val=MIN_SCAN; scan_val<=MAX_SCAN; scan_val+=SCAN_INTERVAL) {
         this->scan_choice->Append( wxString::Format(wxT("%d"), scan_val) );
     }
-    this->time_choice->SetSelection(0);
+    this->scan_choice->SetSelection(0);
 
     // Add the basic layers to the graph
     m_plot = new mpWindow( this, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER );
 	m_plot->AddLayer( new mpScaleX( wxT("Elapsed time [s]")));
     m_plot->AddLayer( new mpScaleY( wxT("Temperature [°C]")));
 	m_plot->EnableMousePanZoom(false);
-	top_sizer->Add( m_plot, 2, wxEXPAND);
+
+	selected_point_layer = new mpFXYVector(wxT("selected_point_layer"));
+	selected_point_layer->SetContinuity(true);
+	wxPen vectorpen1(*wxRED, 1, wxSOLID);
+	selected_point_layer->SetPen(vectorpen1);
+	m_plot->AddLayer(selected_point_layer);
+
+	thermocouple1_layer = new mpFXYVector(wxT("thermocouple1_layer"));
+	thermocouple1_layer->SetContinuity(true);
+	wxPen vectorpen2(*wxBLUE, 1, wxSOLID);
+	thermocouple1_layer->SetPen(vectorpen2);
+	m_plot->AddLayer(thermocouple1_layer);
+
+	thermocouple2_layer = new mpFXYVector(wxT("thermocouple2_layer"));
+	thermocouple2_layer->SetContinuity(true);
+	wxPen vectorpen3(*wxGREEN, 1, wxSOLID);
+	thermocouple2_layer->SetPen(vectorpen3);
+    m_plot->AddLayer(thermocouple2_layer);
+
+	top_sizer->Add( m_plot, 3, wxEXPAND);
 	this->Layout();
 }
 
@@ -178,7 +198,7 @@ void GUI_frame_ext::insert_point( wxCommandEvent& event )
     this->points_list->SetItem(index, 1, temp_text );
 
     // Refresh the graph
-    this->update_graph();
+    this->add_point_to_graph(selected_point_layer, (float)time/1.0, (float)temperature/1.0);
 }
 
 /*
@@ -190,8 +210,10 @@ void GUI_frame_ext::clear_list( wxCommandEvent& event )
     // Keep the reflow starting point
     this->points_list->InsertItem(0, wxT("0") );
     this->points_list->SetItem(0, 1, wxT("25"));
-    // Refresh the graph
-    this->update_graph();
+    // Delete all the points from the plotting layers
+    this->reset_graph(selected_point_layer);
+    this->reset_graph(thermocouple1_layer);
+    this->reset_graph(thermocouple2_layer);
 }
 
 /*
@@ -217,7 +239,7 @@ void GUI_frame_ext::remove_point( wxCommandEvent& event )
     this->points_list->DeleteItem(selected_item);
 
     // Refresh the graph
-    this->update_graph();
+    // TODO: remove the point also from the Layer and uèdate the plot
 }
 
 /**
@@ -227,6 +249,10 @@ void GUI_frame_ext::remove_point( wxCommandEvent& event )
  */
 void GUI_frame_ext::start( wxCommandEvent& event )
 {
+    // Clear thermocouples' plotting data
+    this->reset_graph(thermocouple1_layer);
+    this->reset_graph(thermocouple2_layer);
+
     // Clear the reflow list which might be loaded into the STM32
     TRY(STM32_device->clear_reflow_list());
 
@@ -265,9 +291,39 @@ void GUI_frame_ext::start( wxCommandEvent& event )
     wxString scan_interval;
     scan_interval = this->scan_choice->GetString(this->scan_choice->GetSelection());
     TRY(STM32_device->set_reflow_process_period(scan_interval));
+    scan_interval.ToLong(&reflow_process_scan_interval);
 
     // Start the reflow process
     TRY(STM32_device->start_reflow_process());
+
+    // Enable the timer for data reception
+    this->Start(reflow_process_scan_interval, wxTIMER_ONE_SHOT);
+}
+
+/**
+ *  This is the callback function for the wxTimer. It's used to get data from the STM32
+ *  during the reflow process
+ */
+void GUI_frame_ext::Notify()
+{
+    uint32_t tick, target_temp, thermo1, thermo2;
+    int ret_val = STM32_device->get_reflow_process_data(&tick, &target_temp, &thermo1, &thermo2);
+
+    // In case of error notify the user
+    if (ret_val < 0) {
+        wxMessageBox( wxT("The reflow process will be stopped due to an error"), wxT("Error"), wxICON_INFORMATION);
+        return;
+    }
+    // Notify also when the process terminates
+    if (ret_val > 0) {
+        wxMessageBox( wxT("The reflow process is completed"), wxT("Info"), wxICON_INFORMATION);
+        return;
+    }
+    // Otherwise just plot the received data and re-start the timer
+    // Note: the returned Tick value is in milliseconds whereas the plot is in seconds
+    this->add_point_to_graph(thermocouple1_layer, (float)tick/1000.0, (float)thermo1/1.0);
+    this->add_point_to_graph(thermocouple2_layer, (float)tick/1000.0, (float)thermo2/1.0);
+    this->Start(reflow_process_scan_interval, wxTIMER_ONE_SHOT);
 }
 
 /**
@@ -281,7 +337,7 @@ void GUI_frame_ext::stop( wxCommandEvent& event )
 /**
  *  Update graph with the specified points
  */
-void GUI_frame_ext::update_graph()
+/*void GUI_frame_ext::update_graph()
 {
 	// retrieve the user selected points from the list
 	std::vector<double> vectorx, vectory;
@@ -322,5 +378,23 @@ void GUI_frame_ext::update_graph()
     // Add this new layer to its mpWindow
 	m_plot->AddLayer( new_layer );
 	m_plot->Fit();
+}*/
+
+/**
+ *  Add a point to the specified layer
+ */
+void GUI_frame_ext::add_point_to_graph(mpFXYVector* layer, float x, float y)
+{
+    layer->AddData(x,y);
+    m_plot->Fit();
+}
+
+/**
+ *  Clear all the points from the specified layer
+ */
+void GUI_frame_ext::reset_graph(mpFXYVector* layer)
+{
+    layer->Clear();
+    m_plot->Fit();
 }
 

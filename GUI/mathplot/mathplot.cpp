@@ -2415,6 +2415,46 @@ void mpFXYVector::Clear()
     m_ys.clear();
 }
 
+void mpFXYVector::AddData(float x, float y)
+{
+    // Add the data to the internal array
+    m_xs.push_back(x);
+    m_ys.push_back(y);
+
+    // Update internal variables for the bounding box.
+    if (m_xs.size()>0)
+    {
+        m_minX  = m_xs[0];
+        m_maxX  = m_xs[0];
+        m_minY  = m_ys[0];
+        m_maxY  = m_ys[0];
+
+        std::vector<double>::const_iterator  it;
+
+        for (it=m_xs.begin();it!=m_xs.end();it++)
+        {
+            if (*it<m_minX) m_minX=*it;
+            if (*it>m_maxX) m_maxX=*it;
+        }
+        for (it=m_ys.begin();it!=m_ys.end();it++)
+        {
+            if (*it<m_minY) m_minY=*it;
+            if (*it>m_maxY) m_maxY=*it;
+        }
+        m_minX-=0.5f;
+        m_minY-=0.5f;
+        m_maxX+=0.5f;
+        m_maxY+=0.5f;
+    }
+    else
+    {
+        m_minX  = -1;
+        m_maxX  = 1;
+        m_minY  = -1;
+        m_maxY  = 1;
+    }
+}
+
 void mpFXYVector::SetData( const std::vector<double> &xs,const std::vector<double> &ys)
 {
 	// Check if the data vectora are of the same size
@@ -2425,7 +2465,6 @@ void mpFXYVector::SetData( const std::vector<double> &xs,const std::vector<doubl
     // Copy the data:
     m_xs = xs;
     m_ys = ys;
-
 
     // Update internal variables for the bounding box.
     if (xs.size()>0)

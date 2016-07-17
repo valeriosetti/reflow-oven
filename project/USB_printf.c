@@ -1,6 +1,7 @@
 
 #include "USB_printf.h"
 #include "pcd8544.h"
+#include "stm32f4_discovery.h"
 
 // Macros
 #define USB_put_string(_text_, _size_) 		CDC_Transmit_FS(_text_, _size_)
@@ -177,12 +178,16 @@ int USB_printf_buff(const char *format, ...)
 	int written_chars;
 	char* p_output_buffer = &output_buffer[0];
 
+	BSP_LED_On(LED6);
+
 	va_list args;
 	va_start( args, format );
 	// First print the string to the local output buffer
 	written_chars = print(&p_output_buffer, format, args );
 	// Then send it to the output
 	while(USB_put_string(output_buffer, written_chars) == USBD_BUSY);
+
+	BSP_LED_Off(LED6);
 
 	return written_chars;
 }

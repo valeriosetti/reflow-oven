@@ -21,5 +21,6 @@ int set_PID_parameters(int argc, char *argv[]);
 int start_reflow_process(int argc, char *argv[]);
 int stop_reflow_process(int argc, char *argv[]);
 void reflow_process(uint32_t tick_interval);
+int private_stop_reflow_process(void);
 
 #endif /* REFLOW_PROCESS_H_ */

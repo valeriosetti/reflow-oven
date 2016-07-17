@@ -6,6 +6,7 @@
 
 // Includes
 #include "command_processor.h"
+#include "stm32f4_discovery.h"
 
 // Local functions
 static int process_line(void);
@@ -52,6 +53,9 @@ int cmd_proc_receive_data(uint8_t* Data, uint32_t *Len)
 	uint8_t index;
 	char *pData;
 
+
+	BSP_LED_On(LED5);
+
 	for (index=0; index<(*Len); index++){
 		switch (Data[index]){
 		case '\0':
@@ -77,6 +81,8 @@ int cmd_proc_receive_data(uint8_t* Data, uint32_t *Len)
 			}
 		}
 	}
+
+	BSP_LED_Off(LED5);
 
 	return 0;
 }

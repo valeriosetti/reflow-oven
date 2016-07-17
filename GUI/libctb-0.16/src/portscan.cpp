@@ -47,9 +47,10 @@ namespace ctb {
 
 #else
 	   glob_t globbuf;
+	   int res;
 
 	   // search for standard serial ports
-	   int res = glob( "/dev/ttyS*", GLOB_ERR, NULL, &globbuf );
+	   /*res = glob( "/dev/ttyS*", GLOB_ERR, NULL, &globbuf );
 
 	   if( res == 0 ) {
 
@@ -72,7 +73,7 @@ namespace ctb {
 		  }
 
 	   }
-	   globfree( &globbuf );
+	   globfree( &globbuf );*/
 
 	   // search for USB to RS232 converters
 	   res = glob( "/dev/ttyUSB*", GLOB_ERR, NULL, &globbuf );

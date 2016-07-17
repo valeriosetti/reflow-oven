@@ -36,11 +36,13 @@ int main(void)
 	MX_GPIO_Init();
 	MX_USB_DEVICE_Init();
 	BSP_LED_Init(LED3);
-	BSP_LED_On(LED3);
+	BSP_LED_Off(LED3);
 	BSP_LED_Init(LED4);
 	BSP_LED_Off(LED4);
 	BSP_LED_Init(LED5);
 	BSP_LED_Off(LED5);
+	BSP_LED_Init(LED6);
+	BSP_LED_Off(LED6);
 
 	/* Configure the LCD */
 	PCD8544_Init(0x38);
@@ -83,7 +85,7 @@ int main(void)
 			BSP_LED_Off(LED4);
 
 			// Force the reflow process to stop
-			stop_reflow_process(0, NULL);
+			private_stop_reflow_process();
 
 			// Print a warning message on the LCD
 			PCD8544_Clear();
@@ -98,8 +100,8 @@ int main(void)
 			SSR_set_duty_cycle(SENSOR_2, SSR_MIN_DUTY);
 		}
 
-		// Just blink LED5 to signal that the main process is still alive
-		BSP_LED_Toggle(LED5);
+		// Just blink LED3 to signal that the main process is still alive
+		BSP_LED_Toggle(LED3);
 
 		// Wait for the predefined amount of time before the next iteration
 		while ((HAL_GetTick()-start_tick) < main_loop_period);

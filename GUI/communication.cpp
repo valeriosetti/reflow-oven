@@ -2,6 +2,10 @@
 #include "communication.h"
 #include <sstream>
 
+// Set this to TRUE for debug purposes. TX and RX lines MUST be shorted
+// in order to loopback all commands
+#define SERIAL_LOOPBACK             FALSE
+
 // Virtual serial port defines
 #define SERIAL_PORT_BAUDRATE        115200
 #define SERIAL_PROTOCOL             "8N1"
@@ -11,6 +15,8 @@
 // Reflow process defines
 #define REFLOW_SCAN_TIMEOUT     2000    // milliseconds. It's the maximum interval between STM32's temperature redings before declaring a timeout
 
+// Macros
+#define TEST(_expr_, _errno_)    if(_expr_) { this->disconnect(); return (_errno_); }
 
 /**
  *  @brief  Constructor
@@ -38,23 +44,18 @@ Communication::~Communication()
 int Communication::connect(const char* portname)
 {
     // Try to open the selected COM port
-    int ret = this->Open(portname, SERIAL_PORT_BAUDRATE, SERIAL_PROTOCOL, SERIAL_FLOW_CONTROL);
-
-    if (ret == 0){
-        // In case it fails return an error
-        connected = false;
-        return -1;
-    }
-
-    // Send a test packet to verify that there's the STM32 microcontroller on the other
-    // side of the link
-    if (this->test_communication() != 0){
-        // In case it fails return an error
-        connected = false;
-        return -2;
-    }
-
+    TEST(this->Open(portname, SERIAL_PORT_BAUDRATE, SERIAL_PROTOCOL, SERIAL_FLOW_CONTROL) == -1, -1);
     connected = true;
+    // Send a test packet to verify that there's the STM32 microcontroller on the other side of the link
+    TEST(this->test_communication() != 0, -2);
+    TEST(this->test_communication() != 0, -2);
+    TEST(this->test_communication() != 0, -2);
+    TEST(this->test_communication() != 0, -2);
+    TEST(this->test_communication() != 0, -2);
+    TEST(this->test_communication() != 0, -2);
+    TEST(this->test_communication() != 0, -2);
+    TEST(this->test_communication() != 0, -2);
+    TEST(this->test_communication() != 0, -2);
     return 0;
 }
 
@@ -64,7 +65,18 @@ int Communication::connect(const char* portname)
  */
 void Communication::disconnect()
 {
+    this->Close();
     connected = false;
+}
+
+/**
+ *  @brief  Returns the current status of the connection
+ *  @param  [none]
+ *  @return True if the connection is established correctly; false otherwise.
+ */
+bool Communication::connection_status(void)
+{
+    return connected;
 }
 
 /**
@@ -75,8 +87,8 @@ void Communication::disconnect()
 int Communication::test_communication()
 {
     std::stringstream cmd;
-    cmd << "test\n";
-    return this->send_command(cmd.str());
+    cmd << "test";
+    return this->send_command(cmd);
 }
 
 int Communication::get_reflow_point(float& time, float& temperature)
@@ -89,71 +101,90 @@ int Communication::get_reflow_point(float& time, float& temperature)
 int Communication::add_reflow_point(wxString& time, wxString& temperature)
 {
     std::stringstream cmd;
-    cmd << "add_reflow_point " << time << " " << temperature << "\n";
-    return this->send_command(cmd.str());
+    cmd << "add_reflow_point " << time << " " << temperature;
+    return this->send_command(cmd);
 }
 
 int Communication::clear_reflow_list()
 {
     std::stringstream cmd;
-    cmd << "clear_reflow_list\n";
-    return this->send_command(cmd.str());
+    cmd << "clear_reflow_list";
+    return this->send_command(cmd);
 }
 
 int Communication::set_PID_parameters(unsigned int element, wxString& P_coeff, wxString& I_coeff, wxString& D_coeff)
 {
     std::stringstream cmd;
-    cmd << "set_PID_parameters " << element << " " << P_coeff << " " << I_coeff << " " << D_coeff << "\n";
-    return this->send_command(cmd.str());
+    cmd << "set_PID_parameters " << element << " " << P_coeff << " " << I_coeff << " " << D_coeff;
+    return this->send_command(cmd);
 }
 
 int Communication::start_reflow_process()
 {
     std::stringstream cmd;
-    cmd << "start_reflow_process\n";
-    return this->send_command(cmd.str());
+    cmd << "start_reflow_process";
+    return this->send_command(cmd);
 }
 
 int Communication::stop_reflow_process()
 {
     std::stringstream cmd;
-    cmd << "stop_reflow_process\n";
-    return this->send_command(cmd.str());
+    cmd << "stop_reflow_process";
+    return this->send_command(cmd);
 }
 
 int Communication::set_reflow_process_period(wxString& period)
 {
     std::stringstream cmd;
-    cmd << "set_reflow_process_period " << period << "\n";
-    return this->send_command(cmd.str());
+    cmd << "set_reflow_process_period " << period;
+    return this->send_command(cmd);
 }
 
-int Communication::send_command(std::string cmd)
+int Communication::get_reflow_process_data(uint32_t* tick, uint32_t* target_temp, uint32_t* thermo1, uint32_t* thermo2)
+{
+    int ret_val;
+    char* ret_string;
+    size_t readed_bytes;
+
+    // See if there's any data coming from the STM32
+    ret_val = this->ReadUntilEOS(ret_string, &readed_bytes, SERIAL_EOS_CHAR, SERIAL_TIMEOUT);
+    TEST(ret_val == 0, -1); // Timeout
+    // Check if the process stop for some reason
+    TEST(strcmp(ret_string,"Stop") == 0, 1);   // End of the job (return a positive value because that's not an error)
+    TEST(strcmp(ret_string,"Error") == 0, -2);  // There was an error inside the STM32
+
+    sscanf(ret_string, "time %d target %d temp_1 %d temp_2 %d", tick, target_temp, thermo1, thermo2);
+    return 0;
+}
+
+int Communication::send_command(std::stringstream& cmd)
 {
     int ret_val;
     char* ret_string;
 
+    // If there's not active connection, then return immediately with an error
+    TEST(connected == false, -1);
+    // In case of loopback mode, keep track of the original command (without "\n")
+    #if (SERIAL_LOOPBACK==TRUE)
+        std::stringstream reference_cmd;
+        reference_cmd << cmd.rdbuf();
+    #endif
+    // Add the new line char to the command
+    cmd << "\n";
     // Try to send the command
-    ret_val = this->Writev((char*)cmd.c_str(), cmd.length(), SERIAL_TIMEOUT);
-    if ( (unsigned)ret_val != cmd.length()){
-        // If the sent data was less than expected then return error
-        this->disconnect();
-        return -1;
-    }
-
+    ret_val = this->Writev((char*)cmd.str().c_str(), cmd.str().length(), SERIAL_TIMEOUT);
+    // If the sent data was less than expected then return error
+    TEST((unsigned)ret_val != cmd.str().length(), -2);
     // Check if something was returned from the microcontroller
     size_t readed_bytes;
     ret_val = this->ReadUntilEOS(ret_string, &readed_bytes, SERIAL_EOS_CHAR, SERIAL_TIMEOUT);
-    if ( ret_val == 0){
-        // Nothing was returned before the timeout, so return an error
-        this->disconnect();
-        return -2;
-    }
+    TEST(ret_val == 0, -3);
 
-    if ( strcmp(ret_string,"OK") != 0 ){
-        this->disconnect();
-        return -3;
-    }
+    #if (SERIAL_LOOPBACK==TRUE)
+        TEST(strcmp(ret_string,(char*)reference_cmd.str().c_str()) != 0, -4);
+    #else
+        TEST(strcmp(ret_string,"OK") != 0, -4);
+    #endif
 
     return 0;
 }
