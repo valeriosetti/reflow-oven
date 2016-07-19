@@ -94,10 +94,6 @@ int main(void)
 			PCD8544_GotoXY(0,10);
 			PCD8544_Puts(" USB           ", PCD8544_Pixel_Set, PCD8544_FontSize_5x7);
 			PCD8544_Refresh();
-
-			// Turn off the SSR (debug phase)
-			SSR_set_duty_cycle(SENSOR_1, SSR_MIN_DUTY);
-			SSR_set_duty_cycle(SENSOR_2, SSR_MIN_DUTY);
 		}
 
 		// Just blink LED3 to signal that the main process is still alive

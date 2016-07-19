@@ -13,9 +13,9 @@
 #define MIN_TIME            0+TIME_INTERVAL
 #define MAX_TIME            1200
 
-#define COEFFS_INTERVAL     0.1
-#define COEFFS_MIN_VALUE    0
-#define COEFFS_MAX_VALUE    10
+#define COEFFS_INTERVAL     10.0
+#define COEFFS_MIN_VALUE    0.0
+#define COEFFS_MAX_VALUE    1000.0
 
 #define MIN_SCAN            250
 #define MAX_SCAN            2000
@@ -40,10 +40,6 @@ GUI_frame_ext::GUI_frame_ext(wxWindow* parent)
     this->points_list->ClearAll();
     this->points_list->AppendColumn(wxString(wxT("Time [s]")), wxLIST_FORMAT_CENTRE, wxLIST_AUTOSIZE_USEHEADER);
     this->points_list->AppendColumn(wxString(wxT("Temperature [°C]")), wxLIST_FORMAT_CENTRE, wxLIST_AUTOSIZE_USEHEADER);
-
-    // Add the reflow starting point by default
-    this->points_list->InsertItem(0, wxT("0") );
-    this->points_list->SetItem(0, 1, wxT("25"));
 
     // Update the status bar
     this->status_bar->SetStatusText(wxString("Disconnected"));
@@ -107,6 +103,12 @@ GUI_frame_ext::GUI_frame_ext(wxWindow* parent)
     m_plot->AddLayer(thermocouple2_layer);
 
 	top_sizer->Add( m_plot, 3, wxEXPAND);
+
+	// Add the reflow starting point by default
+    this->points_list->InsertItem(0, wxT("0") );
+    this->points_list->SetItem(0, 1, wxT("25"));
+    this->add_point_to_graph(selected_point_layer, 0.0, 25.0);
+
 	this->Layout();
 }
 
@@ -207,13 +209,14 @@ void GUI_frame_ext::insert_point( wxCommandEvent& event )
 void GUI_frame_ext::clear_list( wxCommandEvent& event )
 {
     points_list->DeleteAllItems();
-    // Keep the reflow starting point
-    this->points_list->InsertItem(0, wxT("0") );
-    this->points_list->SetItem(0, 1, wxT("25"));
     // Delete all the points from the plotting layers
     this->reset_graph(selected_point_layer);
     this->reset_graph(thermocouple1_layer);
     this->reset_graph(thermocouple2_layer);
+    // Keep the reflow starting point
+    this->points_list->InsertItem(0, wxT("0") );
+    this->points_list->SetItem(0, 1, wxT("25"));
+    this->add_point_to_graph(selected_point_layer, 0.0, 25.0);
 }
 
 /*

@@ -10,7 +10,7 @@
 
 // Local functions
 static float compute_target_temp(uint32_t milliseconds);
-static uint16_t	compute_PWM_value(SENSOR_ID id, uint32_t delta_time, float thermo_temp, float target_temp);
+static uint8_t	compute_duty_cycle(SENSOR_ID id, uint32_t delta_time, float thermo_temp, float target_temp);
 
 // New types
 typedef struct{
@@ -172,7 +172,7 @@ void reflow_process(uint32_t tick_interval)
 	float thermo_temp_1, internal_temp_1, thermo_temp_2, internal_temp_2;
 	float target_temp;
 	uint8_t status;
-	uint16_t SSR_duty;
+	uint8_t SSR_duty1, SSR_duty2;
 
 	// If the reflow process isn't started yet, then return immediately
 	if (reflow_process_enabled == 0) {
@@ -196,20 +196,20 @@ void reflow_process(uint32_t tick_interval)
 				MAX31855_read(SENSOR_2, &thermo_temp_2, &internal_temp_2)  );
 
 	// In case of any error from thermocouples, then stop the process
-	/*if (status != 0) {
+	if (status != 0) {
 		private_stop_reflow_process();
 		USB_printf_buff("Error\n");
 		return;
-	}*/
+	}
 
 	// Compute the next desired temperature for the current time (it's also converted to float)
 	target_temp = compute_target_temp(reflow_process_tick);
 
 	// Update SSR's PWM in order to match this temperature
-	SSR_duty = compute_PWM_value(SENSOR_1, tick_interval, thermo_temp_1, target_temp);
-	SSR_set_duty_cycle(SENSOR_1, SSR_duty);
-	SSR_duty = compute_PWM_value(SENSOR_2, tick_interval, thermo_temp_2, target_temp);
-	SSR_set_duty_cycle(SENSOR_2, SSR_duty);
+	SSR_duty1 = compute_duty_cycle(SENSOR_1, tick_interval, thermo_temp_1, target_temp);
+	SSR_set_duty_cycle(SENSOR_1, SSR_duty1);
+	SSR_duty2 = compute_duty_cycle(SENSOR_2, tick_interval, thermo_temp_2, target_temp);
+	SSR_set_duty_cycle(SENSOR_2, SSR_duty2);
 
 	// Send a feedback to the host PC about the current status
 	USB_printf_buff("time %d target %d temp_1 %d temp_2 %d\n",
@@ -221,9 +221,11 @@ void reflow_process(uint32_t tick_interval)
 	// Print temperature data on the LCD
 	PCD8544_Clear();
 	PCD8544_GotoXY(0,0);
-	PCD8544_printf_buff("Tick = %d", reflow_process_tick);
+//	PCD8544_printf_buff("Tick = %d", reflow_process_tick);
+	PCD8544_printf_buff("Duty1 = %d", SSR_duty1);
 	PCD8544_GotoXY(0,10);
-	PCD8544_printf_buff("Target = %d", (int32_t)target_temp);
+//	PCD8544_printf_buff("Target = %d", (int32_t)target_temp);
+	PCD8544_printf_buff("Duty2 = %d", SSR_duty2);
 	PCD8544_GotoXY(0,20);
 	PCD8544_printf_buff("Thermo1 = %d", (int32_t)thermo_temp_1);
 	PCD8544_GotoXY(0,30);
@@ -274,19 +276,25 @@ static float compute_target_temp(uint32_t millisecond)
  *	@param	delta_time => is the time interval used for PID controller's computations
  *			thermo_temp => is the current thermocouple's temperature
  *			target_temp => is the desired temperature
- *	@return	The new PWM value that should be set to the SSR
+ *	@return	The new duty cycle value that should be set to the SSR
  */
-static uint16_t	compute_PWM_value(SENSOR_ID id, uint32_t delta_time, float thermo_temp, float target_temp)
+static uint8_t	compute_duty_cycle(SENSOR_ID id, uint32_t delta_time, float thermo_temp, float target_temp)
 {
 	float current_error, derivative_error;
-	uint16_t ret_val;
+	uint32_t duty;
 
+	// Compute the theoretical duty cycle
 	current_error = target_temp - thermo_temp;
 	integral_error = integral_error + current_error*delta_time;
 	derivative_error = (current_error - previous_error) / delta_time;
-	ret_val = 	Pcoeff[id]*current_error +
-				Icoeff[id]*integral_error +
-				Dcoeff[id]*derivative_error;
+	duty = 	Pcoeff[id]*current_error +
+			Icoeff[id]*integral_error +
+			Dcoeff[id]*derivative_error;
 
-	return ret_val;
+	// If it's outside allowed range, then limit it
+	if (duty > SSR_MAX_DUTY) {
+		duty = SSR_MAX_DUTY;
+	}
+
+	return (uint8_t)duty;
 }
