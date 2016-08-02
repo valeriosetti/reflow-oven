@@ -1,6 +1,7 @@
 #include "GUI_interface_extend.h"
 #include <wx/msgdlg.h>
 #include "mathplot/mathplot.h"
+#include <wx/filedlg.h>
 
 // Local defines
 #define MAX_NUM_POINTS      8
@@ -82,7 +83,7 @@ GUI_frame_ext::GUI_frame_ext(wxWindow* parent)
     m_plot = new mpWindow( this, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER );
 	m_plot->AddLayer( new mpScaleX( wxT("Elapsed time [s]")));
     m_plot->AddLayer( new mpScaleY( wxT("Temperature [°C]")));
-	m_plot->EnableMousePanZoom(false);
+	//m_plot->EnableMousePanZoom(false);
 
 	selected_point_layer = new mpFXYVector(wxT("selected_point_layer"));
 	selected_point_layer->SetContinuity(true);
@@ -103,6 +104,8 @@ GUI_frame_ext::GUI_frame_ext(wxWindow* parent)
     m_plot->AddLayer(thermocouple2_layer);
 
 	top_sizer->Add( m_plot, 3, wxEXPAND);
+
+	m_plot->SetMargins(100, 100, 100, 100);
 
 	// Add the reflow starting point by default
     this->points_list->InsertItem(0, wxT("0") );
@@ -338,58 +341,12 @@ void GUI_frame_ext::stop( wxCommandEvent& event )
 }
 
 /**
- *  Update graph with the specified points
- */
-/*void GUI_frame_ext::update_graph()
-{
-	// retrieve the user selected points from the list
-	std::vector<double> vectorx, vectory;
-    int index = 0;
-    int num_items = this->points_list->GetItemCount();
-    wxListItem temp_item;
-    double temp_value;
-
-    for (index=0; index<num_items; index++){
-        // Get the time
-        temp_item.SetId(index);
-        temp_item.SetColumn(0);
-        this->points_list->GetItem(temp_item);
-        (temp_item.GetText()).ToDouble(&temp_value);
-        vectorx.push_back(temp_value);
-        // Get the temperature
-        temp_item.SetId(index);
-        temp_item.SetColumn(1);
-        this->points_list->GetItem(temp_item);
-        (temp_item.GetText()).ToDouble(&temp_value);
-        vectory.push_back(temp_value);
-    }
-
-    // Delete any previous plot layer (if any) before creating a new one
-    mpLayer* old_layer = m_plot->GetLayerByName(wxString("selected_points"));
-    if (old_layer != NULL){
-        m_plot->DelLayer(old_layer, true, true);
-    }
-
-    // Create a mpFXYVector layer
-	mpFXYVector* new_layer = new mpFXYVector(_("selected_points"));
-	new_layer->SetData(vectorx, vectory);
-	new_layer->SetContinuity(true);
-	wxPen vectorpen(*wxBLUE, 1, wxSOLID);
-	new_layer->SetPen(vectorpen);
-	new_layer->SetDrawOutsideMargins(false);
-
-    // Add this new layer to its mpWindow
-	m_plot->AddLayer( new_layer );
-	m_plot->Fit();
-}*/
-
-/**
  *  Add a point to the specified layer
  */
 void GUI_frame_ext::add_point_to_graph(mpFXYVector* layer, float x, float y)
 {
     layer->AddData(x,y);
-    m_plot->Fit();
+    m_plot->FitXOnly(0.0f, MAX_TEMPERATURE);
 }
 
 /**
@@ -398,6 +355,34 @@ void GUI_frame_ext::add_point_to_graph(mpFXYVector* layer, float x, float y)
 void GUI_frame_ext::reset_graph(mpFXYVector* layer)
 {
     layer->Clear();
-    m_plot->Fit();
+    m_plot->FitXOnly(0.0f, MAX_TEMPERATURE);
+}
+
+/**
+ *  Save the current configuration to a file
+ */
+void GUI_frame_ext::save_config( wxCommandEvent& event )
+{
+    wxFileDialog* OpenDialog = new wxFileDialog(
+                        this, wxT("Choose the saving file"), wxEmptyString, wxT("reflow_config"),
+                        wxT("Text files (*.txt)|*.txt"),
+                        wxFD_SAVE | wxFD_OVERWRITE_PROMPT, wxDefaultPosition);
+
+	// Creates a "open file" dialog with 4 file types
+	if (OpenDialog->ShowModal() == wxID_OK) // if the user click "Open" instead of "Cancel"
+	{
+
+	}
+
+	// Clean up after ourselves
+	OpenDialog->Destroy();
+}
+
+/**
+ *  Reload a previously saved configuration from a file
+ */
+void GUI_frame_ext::reload_config( wxCommandEvent& event )
+{
+
 }
 

@@ -1395,6 +1395,11 @@ void mpWindow::Fit()
 		Fit(m_minX,m_maxX,m_minY,m_maxY );
 }
 
+void mpWindow::FitXOnly(double yMin, double yMax)
+{
+	if (UpdateBBox())
+		Fit(m_minX,m_maxX,yMin,yMax);
+}
 
 // JL
 void mpWindow::Fit(double xMin, double xMax, double yMin, double yMax, wxCoord *printSizeX,wxCoord *printSizeY)

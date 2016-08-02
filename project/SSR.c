@@ -7,6 +7,7 @@
  */
 
 #include "SSR.h"
+#include "main.h"
 
 /* Private defines */
 // The timer will configured for a 100Hz period PWM
@@ -26,6 +27,7 @@
 /* Private variables */
 TIM_HandleTypeDef	hTIM;
 TIM_OC_InitTypeDef 	TIM_OC_init;
+uint8_t isDutyCycleForced = FALSE;
 
 /*
  * Initialize the timer and the GPIO for the SSR
@@ -91,6 +93,10 @@ void SSR_stop()
  */
 void SSR_set_duty_cycle(SENSOR_ID id, uint8_t duty)
 {
+	// If the duty cycle was previously locked, then do not update it
+	if (isDutyCycleForced)
+		return;
+
 	// Set the duty cycle for the proper SSR
 	switch (id)
 	{
@@ -121,10 +127,11 @@ int SSR_force_duty_cycle(int argc, char *argv[])
 		return -1;
 	}
 
+	// Parse parameters
 	id = atoi(argv[0]);
 	duty = atoi(argv[1]);
 
-	if ((id!=SENSOR_1)||(id!=SENSOR_2)) {
+	if ((id!=SENSOR_1)&&(id!=SENSOR_2)) {
 		USB_printf_buff("Error\n");
 		return -2;
 	}
@@ -132,4 +139,19 @@ int SSR_force_duty_cycle(int argc, char *argv[])
 	SSR_set_duty_cycle(id, duty);
 
 	return 0;
+}
+
+/**
+ *	@brief	It locks/unlocks the automatic update of the duty cycle during the reflow process.
+ *	@param	argv[0]	-> '1' means locked; '0' means unlocked
+ */
+int SSR_lock_duty_cycle(int argc, char *argv[])
+{
+	// Basic parameters check
+	if (argc != 1) {
+		USB_printf_buff("Error\n");
+		return -1;
+	}
+
+	isDutyCycleForced = atoi(argv[0]);
 }

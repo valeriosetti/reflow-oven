@@ -998,6 +998,7 @@ public:
         The X/Y scale aspect lock is taken into account.
     */
     void Fit();
+    void FitXOnly(double yMin, double yMax);
 
     /** Set view to fit a given bounding box and refresh display.
         The X/Y scale aspect lock is taken into account.
@@ -1067,6 +1068,7 @@ public:
 	  * @sa Fit
    	  */
 	double GetDesiredYmax() {return m_desiredYmax; }
+	void SetDesiredYmax(double new_value) {m_desiredYmax=new_value; }
 
 	/** Returns the bounding box coordinates
 		@param bbox Pointer to a 6-element double array where to store bounding box coordinates. */

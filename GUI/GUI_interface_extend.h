@@ -53,6 +53,8 @@ class GUI_frame_ext : public GUI_frame, wxTimer
         void remove_point( wxCommandEvent& event );
         void stop( wxCommandEvent& event );
 		void start( wxCommandEvent& event );
+		void save_config( wxCommandEvent& event );
+		void reload_config( wxCommandEvent& event );
 };
 
 #endif // GUI_INTERFACE_EXTEND_H_INCLUDED

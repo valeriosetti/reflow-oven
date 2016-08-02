@@ -49,6 +49,9 @@ class GUI_frame : public wxFrame
 		wxListCtrl* points_list;
 		wxButton* remove_point_btn;
 		wxButton* clear_list_btn;
+		
+		wxButton* save_config_btn;
+		wxButton* reload_config_btn;
 		wxStaticLine* m_staticline2;
 		wxStaticText* m_staticText5;
 		wxChoice* P_choice_1;
@@ -78,6 +81,8 @@ class GUI_frame : public wxFrame
 		virtual void insert_point( wxCommandEvent& event ) { event.Skip(); }
 		virtual void remove_point( wxCommandEvent& event ) { event.Skip(); }
 		virtual void clear_list( wxCommandEvent& event ) { event.Skip(); }
+		virtual void save_config( wxCommandEvent& event ) { event.Skip(); }
+		virtual void reload_config( wxCommandEvent& event ) { event.Skip(); }
 		virtual void stop( wxCommandEvent& event ) { event.Skip(); }
 		virtual void start( wxCommandEvent& event ) { event.Skip(); }
 		

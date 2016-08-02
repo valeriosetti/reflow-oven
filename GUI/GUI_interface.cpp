@@ -83,10 +83,19 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 	
 	remove_point_btn = new wxButton( this, wxID_ANY, wxT("Remove Point"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( remove_point_btn, 0, wxALL, 5 );
+	bSizer7->Add( remove_point_btn, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	clear_list_btn = new wxButton( this, wxID_ANY, wxT("Clear List"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( clear_list_btn, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+	bSizer7->Add( clear_list_btn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	
+	bSizer7->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	save_config_btn = new wxButton( this, wxID_ANY, wxT("Save config"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer7->Add( save_config_btn, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	reload_config_btn = new wxButton( this, wxID_ANY, wxT("Reload config"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer7->Add( reload_config_btn, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	bSizer3->Add( bSizer7, 0, wxEXPAND, 5 );
 	
@@ -213,6 +222,8 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	insert_point_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::insert_point ), NULL, this );
 	remove_point_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::remove_point ), NULL, this );
 	clear_list_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::clear_list ), NULL, this );
+	save_config_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::save_config ), NULL, this );
+	reload_config_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::reload_config ), NULL, this );
 	stop_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::stop ), NULL, this );
 	start_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::start ), NULL, this );
 }
@@ -225,6 +236,8 @@ GUI_frame::~GUI_frame()
 	insert_point_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::insert_point ), NULL, this );
 	remove_point_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::remove_point ), NULL, this );
 	clear_list_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::clear_list ), NULL, this );
+	save_config_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::save_config ), NULL, this );
+	reload_config_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::reload_config ), NULL, this );
 	stop_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::stop ), NULL, this );
 	start_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::start ), NULL, this );
 }
