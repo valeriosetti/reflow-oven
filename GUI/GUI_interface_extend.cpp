@@ -2,6 +2,8 @@
 #include <wx/msgdlg.h>
 #include "mathplot/mathplot.h"
 #include <wx/filedlg.h>
+#include <iostream>
+#include <fstream>
 
 // Local defines
 #define MAX_NUM_POINTS      8
@@ -369,9 +371,41 @@ void GUI_frame_ext::save_config( wxCommandEvent& event )
                         wxFD_SAVE | wxFD_OVERWRITE_PROMPT, wxDefaultPosition);
 
 	// Creates a "open file" dialog with 4 file types
-	if (OpenDialog->ShowModal() == wxID_OK) // if the user click "Open" instead of "Cancel"
+	if (OpenDialog->ShowModal() == wxID_OK)
 	{
+        std::ofstream output_file;
+        wxListItem temp_item;
 
+        output_file.open(OpenDialog->GetPath(), std::ios::out);
+
+        int item_count = this->points_list->GetItemCount();
+
+        // Save the number of reflow points
+        output_file << "reflow_point_num " << item_count << std::endl;
+
+        // Save reflow points list
+        for (int index=0; index < item_count; index++){
+            temp_item.SetId(index);
+            temp_item.SetColumn(0);
+            this->points_list->GetItem(temp_item);
+            output_file << "time " << temp_item.GetText() << " ";
+            temp_item.SetColumn(1);
+            this->points_list->GetItem(temp_item);
+            output_file << "temp " << temp_item.GetText() << std::endl;
+        }
+
+        // Save PIDs parameters
+        output_file << "P1_index " << this->P_choice_1->GetSelection() << std::endl;
+        output_file << "I1_index " << this->I_choice_1->GetSelection() << std::endl;
+        output_file << "D1_index " << this->D_choice_1->GetSelection() << std::endl;
+        output_file << "P2_index " << this->P_choice_2->GetSelection() << std::endl;
+        output_file << "I2_index " << this->I_choice_2->GetSelection() << std::endl;
+        output_file << "D2_index " << this->D_choice_2->GetSelection() << std::endl;
+
+        // Save the scan interval
+        output_file << "scan_interval_index " << this->scan_choice->GetSelection() << std::endl;
+	} else {
+        return;
 	}
 
 	// Clean up after ourselves
@@ -383,6 +417,52 @@ void GUI_frame_ext::save_config( wxCommandEvent& event )
  */
 void GUI_frame_ext::reload_config( wxCommandEvent& event )
 {
+   wxFileDialog* OpenDialog = new wxFileDialog(
+                        this, wxT("Choose the config file"), wxEmptyString, wxT("reflow_config"),
+                        wxT("Text files (*.txt)|*.txt"),
+                        wxFD_OPEN | wxFD_FILE_MUST_EXIST, wxDefaultPosition);
 
+	// Creates a "open file" dialog with 4 file types
+	if (OpenDialog->ShowModal() == wxID_OK)
+	{
+        std::ifstream input_file;
+        int item_count, menu_index;
+        std::string temp_string, time, temperature;
+
+        input_file.open(OpenDialog->GetPath(), std::ios::in);
+
+        // Reload reflow points
+        input_file >> temp_string >> item_count;
+        for (int index=0; index < item_count; index++) {
+            input_file >> temp_string >> time >> temp_string >> temperature;
+            this->points_list->InsertItem(index, time );
+            this->points_list->SetItem(index, 1, temperature );
+        }
+
+        // Reload PIDs parameters
+        input_file >> temp_string >> menu_index;
+        this->P_choice_1->SetSelection(menu_index);
+        input_file >> temp_string >> menu_index;
+        this->I_choice_1->SetSelection(menu_index);
+        input_file >> temp_string >> menu_index;
+        this->D_choice_1->SetSelection(menu_index);
+        input_file >> temp_string >> menu_index;
+        this->P_choice_2->SetSelection(menu_index);
+        input_file >> temp_string >> menu_index;
+        this->I_choice_2->SetSelection(menu_index);
+        input_file >> temp_string >> menu_index;
+        this->D_choice_2->SetSelection(menu_index);
+
+        // Reload the scan interval
+        input_file >> temp_string >> menu_index;
+        this->scan_choice->SetSelection(menu_index);
+
+        //fclose(fp);
+	} else {
+        return;
+	}
+
+	// Clean up after ourselves
+	OpenDialog->Destroy();
 }
 
