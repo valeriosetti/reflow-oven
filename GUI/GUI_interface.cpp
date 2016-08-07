@@ -83,19 +83,19 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 	
 	remove_point_btn = new wxButton( this, wxID_ANY, wxT("Remove Point"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( remove_point_btn, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	bSizer7->Add( remove_point_btn, 1, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	clear_list_btn = new wxButton( this, wxID_ANY, wxT("Clear List"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( clear_list_btn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	bSizer7->Add( clear_list_btn, 1, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	
 	bSizer7->Add( 0, 0, 1, wxEXPAND, 5 );
 	
 	save_config_btn = new wxButton( this, wxID_ANY, wxT("Save config"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( save_config_btn, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	bSizer7->Add( save_config_btn, 1, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	reload_config_btn = new wxButton( this, wxID_ANY, wxT("Reload config"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer7->Add( reload_config_btn, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	bSizer7->Add( reload_config_btn, 1, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	bSizer3->Add( bSizer7, 0, wxEXPAND, 5 );
 	
@@ -212,8 +212,24 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	top_sizer->Add( bSizer9, 1, wxEXPAND, 5 );
 	
+	wxBoxSizer* bSizer11;
+	bSizer11 = new wxBoxSizer( wxVERTICAL );
+	
+	m_panel1 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 50,-1 ), wxTAB_TRAVERSAL );
+	graph_sizer = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_panel1->SetSizer( graph_sizer );
+	m_panel1->Layout();
+	bSizer11->Add( m_panel1, 1, wxEXPAND | wxALL, 5 );
+	
+	save_graph_btn = new wxButton( this, wxID_ANY, wxT("Save graph"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer11->Add( save_graph_btn, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	top_sizer->Add( bSizer11, 1, wxEXPAND, 5 );
+	
 	this->SetSizer( top_sizer );
 	this->Layout();
+	top_sizer->Fit( this );
 	status_bar = this->CreateStatusBar( 1, wxST_SIZEGRIP, wxID_ANY );
 	
 	// Connect Events
@@ -226,6 +242,7 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	reload_config_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::reload_config ), NULL, this );
 	stop_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::stop ), NULL, this );
 	start_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::start ), NULL, this );
+	save_graph_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::save_graph ), NULL, this );
 }
 
 GUI_frame::~GUI_frame()
@@ -240,4 +257,5 @@ GUI_frame::~GUI_frame()
 	reload_config_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::reload_config ), NULL, this );
 	stop_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::stop ), NULL, this );
 	start_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::start ), NULL, this );
+	save_graph_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::save_graph ), NULL, this );
 }

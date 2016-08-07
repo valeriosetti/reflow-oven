@@ -196,11 +196,11 @@ void reflow_process(uint32_t tick_interval)
 				MAX31855_read(SENSOR_2, &thermo_temp_2, &internal_temp_2)  );
 
 	// In case of any error from thermocouples, then stop the process
-	if (status != 0) {
+	/*if (status != 0) {
 		private_stop_reflow_process();
 		USB_printf_buff("Error\n");
 		return;
-	}
+	}*/
 
 	// Compute the next desired temperature for the current time (it's also converted to float)
 	target_temp = compute_target_temp(reflow_process_tick);

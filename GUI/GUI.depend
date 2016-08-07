@@ -1,8 +1,8 @@
 # depslib dependency file v1.0
-1470170616 source:/home/valerio/reflow-oven/GUI/GUI_interface.cpp
+1470601776 source:/home/valerio/reflow-oven/GUI/GUI_interface.cpp
 	"GUI_interface.h"
 
-1470170616 /home/valerio/reflow-oven/GUI/GUI_interface.h
+1470602033 /home/valerio/reflow-oven/GUI/GUI_interface.h
 	<wx/string.h>
 	<wx/button.h>
 	<wx/gdicmn.h>
@@ -14,6 +14,7 @@
 	<wx/statline.h>
 	<wx/stattext.h>
 	<wx/listctrl.h>
+	<wx/panel.h>
 	<wx/statusbr.h>
 	<wx/frame.h>
 
@@ -969,12 +970,16 @@
 
 1462040871 /usr/local/include/wx-3.0/wx/gtk/app.h
 
-1470167721 source:/home/valerio/reflow-oven/GUI/GUI_interface_extend.cpp
+1470601834 source:/home/valerio/reflow-oven/GUI/GUI_interface_extend.cpp
 	"GUI_interface_extend.h"
 	<wx/msgdlg.h>
 	"mathplot/mathplot.h"
+	<wx/filedlg.h>
+	<iostream>
+	<string>
+	<fstream>
 
-1470170663 /home/valerio/reflow-oven/GUI/GUI_interface_extend.h
+1470599144 /home/valerio/reflow-oven/GUI/GUI_interface_extend.h
 	<wx/string.h>
 	<wx/choice.h>
 	<wx/gdicmn.h>
@@ -1492,4 +1497,55 @@
 
 1462040869 /usr/local/include/wx-3.0/wx/time.h
 	"wx/longlong.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/filedlg.h
+	"wx/defs.h"
+	"wx/dialog.h"
+	"wx/arrstr.h"
+	"wx/generic/filedlgg.h"
+	"wx/msw/filedlg.h"
+	"wx/motif/filedlg.h"
+	"wx/gtk/filedlg.h"
+	"wx/gtk1/filedlg.h"
+	"wx/osx/filedlg.h"
+	"wx/cocoa/filedlg.h"
+	"wx/os2/filedlg.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/filedlg.h
+	"wx/gtk/filectrl.h"
+
+1462040871 /usr/local/include/wx-3.0/wx/gtk/filectrl.h
+	"wx/control.h"
+	"wx/filectrl.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/filectrl.h
+	"wx/defs.h"
+	"wx/string.h"
+	"wx/event.h"
+	"wx/gtk/filectrl.h"
+	"wx/generic/filectrlg.h"
+
+1462040870 /usr/local/include/wx-3.0/wx/generic/filectrlg.h
+	"wx/containr.h"
+	"wx/listctrl.h"
+	"wx/filectrl.h"
+	"wx/filename.h"
+
+1462040869 /usr/local/include/wx-3.0/wx/filename.h
+	"wx/arrstr.h"
+	"wx/filefn.h"
+	"wx/datetime.h"
+	"wx/intl.h"
+	"wx/longlong.h"
+	"wx/file.h"
+
+1462040869 /usr/local/include/wx-3.0/wx/file.h
+	"wx/defs.h"
+	"wx/string.h"
+	"wx/filefn.h"
+	"wx/convauto.h"
+
+1462040869 /usr/local/include/wx-3.0/wx/convauto.h
+	"wx/strconv.h"
+	"wx/fontenc.h"
 

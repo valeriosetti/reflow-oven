@@ -19,6 +19,7 @@
 #include <wx/statline.h>
 #include <wx/stattext.h>
 #include <wx/listctrl.h>
+#include <wx/panel.h>
 #include <wx/statusbr.h>
 #include <wx/frame.h>
 
@@ -73,6 +74,9 @@ class GUI_frame : public wxFrame
 		wxStaticLine* m_staticline4;
 		wxButton* stop_btn;
 		wxButton* start_btn;
+		wxPanel* m_panel1;
+		wxBoxSizer* graph_sizer;
+		wxButton* save_graph_btn;
 		wxStatusBar* status_bar;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -85,11 +89,12 @@ class GUI_frame : public wxFrame
 		virtual void reload_config( wxCommandEvent& event ) { event.Skip(); }
 		virtual void stop( wxCommandEvent& event ) { event.Skip(); }
 		virtual void start( wxCommandEvent& event ) { event.Skip(); }
+		virtual void save_graph( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		GUI_frame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 685,627 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		GUI_frame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		~GUI_frame();
 	
 };

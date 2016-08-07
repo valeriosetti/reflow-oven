@@ -3,6 +3,7 @@
 #include "mathplot/mathplot.h"
 #include <wx/filedlg.h>
 #include <iostream>
+#include <string>
 #include <fstream>
 
 // Local defines
@@ -82,9 +83,9 @@ GUI_frame_ext::GUI_frame_ext(wxWindow* parent)
     this->scan_choice->SetSelection(0);
 
     // Add the basic layers to the graph
-    m_plot = new mpWindow( this, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER );
-	m_plot->AddLayer( new mpScaleX( wxT("Elapsed time [s]")));
-    m_plot->AddLayer( new mpScaleY( wxT("Temperature [°C]")));
+    m_plot = new mpWindow( this->m_panel1, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER );
+	m_plot->AddLayer( new mpScaleX( wxT("Elapsed time [s]"), mpALIGN_CENTER, FALSE, mpX_NORMAL));
+    m_plot->AddLayer( new mpScaleY( wxT("Temperature [°C]"), mpALIGN_CENTER, FALSE));
 	//m_plot->EnableMousePanZoom(false);
 
 	selected_point_layer = new mpFXYVector(wxT("selected_point_layer"));
@@ -105,9 +106,9 @@ GUI_frame_ext::GUI_frame_ext(wxWindow* parent)
 	thermocouple2_layer->SetPen(vectorpen3);
     m_plot->AddLayer(thermocouple2_layer);
 
-	top_sizer->Add( m_plot, 3, wxEXPAND);
+	graph_sizer->Add( m_plot, 3, wxEXPAND);
 
-	m_plot->SetMargins(100, 100, 100, 100);
+	m_plot->SetMargins(10, 10, 10, 40);
 
 	// Add the reflow starting point by default
     this->points_list->InsertItem(0, wxT("0") );
@@ -331,7 +332,7 @@ void GUI_frame_ext::Notify()
     // Note: the returned Tick value is in milliseconds whereas the plot is in seconds
     this->add_point_to_graph(thermocouple1_layer, (float)tick/1000.0, (float)thermo1/1.0);
     this->add_point_to_graph(thermocouple2_layer, (float)tick/1000.0, (float)thermo2/1.0);
-    this->Start(reflow_process_scan_interval, wxTIMER_ONE_SHOT);
+    this->Start(MIN_SCAN/10, wxTIMER_ONE_SHOT);
 }
 
 /**
@@ -348,7 +349,8 @@ void GUI_frame_ext::stop( wxCommandEvent& event )
 void GUI_frame_ext::add_point_to_graph(mpFXYVector* layer, float x, float y)
 {
     layer->AddData(x,y);
-    m_plot->FitXOnly(0.0f, MAX_TEMPERATURE);
+    //m_plot->FitXOnly(0.0f, MAX_TEMPERATURE);
+    m_plot->Fit();
 }
 
 /**
@@ -357,7 +359,8 @@ void GUI_frame_ext::add_point_to_graph(mpFXYVector* layer, float x, float y)
 void GUI_frame_ext::reset_graph(mpFXYVector* layer)
 {
     layer->Clear();
-    m_plot->FitXOnly(0.0f, MAX_TEMPERATURE);
+    //m_plot->FitXOnly(0.0f, MAX_TEMPERATURE);
+    m_plot->Fit();
 }
 
 /**
@@ -432,11 +435,13 @@ void GUI_frame_ext::reload_config( wxCommandEvent& event )
         input_file.open(OpenDialog->GetPath(), std::ios::in);
 
         // Reload reflow points
+        points_list->DeleteAllItems();
         input_file >> temp_string >> item_count;
         for (int index=0; index < item_count; index++) {
             input_file >> temp_string >> time >> temp_string >> temperature;
             this->points_list->InsertItem(index, time );
             this->points_list->SetItem(index, 1, temperature );
+            this->add_point_to_graph(selected_point_layer, atof(time.c_str()), atof(temperature.c_str()));
         }
 
         // Reload PIDs parameters
@@ -458,6 +463,28 @@ void GUI_frame_ext::reload_config( wxCommandEvent& event )
         this->scan_choice->SetSelection(menu_index);
 
         //fclose(fp);
+	} else {
+        return;
+	}
+
+	// Clean up after ourselves
+	OpenDialog->Destroy();
+}
+
+/**
+ *  Save the current graph to file
+ */
+void GUI_frame_ext::save_graph( wxCommandEvent& event )
+{
+    wxFileDialog* OpenDialog = new wxFileDialog(
+                        this, wxT("Choose the saving file"), wxEmptyString, wxT("Save graph"),
+                        wxT("Text files (*.bmp)|*.bmp"),
+                        wxFD_SAVE | wxFD_OVERWRITE_PROMPT, wxDefaultPosition);
+
+	// Creates a "open file" dialog with 4 file types
+	if (OpenDialog->ShowModal() == wxID_OK)
+	{
+        m_plot->SaveScreenshot(OpenDialog->GetPath());
 	} else {
         return;
 	}

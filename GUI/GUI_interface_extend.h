@@ -55,6 +55,7 @@ class GUI_frame_ext : public GUI_frame, wxTimer
 		void start( wxCommandEvent& event );
 		void save_config( wxCommandEvent& event );
 		void reload_config( wxCommandEvent& event );
+		void save_graph( wxCommandEvent& event );
 };
 
 #endif // GUI_INTERFACE_EXTEND_H_INCLUDED
