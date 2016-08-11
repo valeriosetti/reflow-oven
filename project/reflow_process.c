@@ -11,6 +11,10 @@
 // Local functions
 static float compute_target_temp(uint32_t milliseconds);
 static uint8_t	compute_duty_cycle(SENSOR_ID id, uint32_t delta_time, float thermo_temp, float target_temp);
+static uint8_t	compute_fake_duty_cycle(SENSOR_ID id, uint32_t delta_time, float thermo_temp, float target_temp);
+
+// Macros
+#define max(a,b)	((a > b) ? a : b)
 
 // New types
 typedef struct{
@@ -28,10 +32,10 @@ uint32_t reflow_process_tick;			// Local tick count for the reflow process
 float 	Pcoeff[NUMBER_OF_SENSORS],
 		Icoeff[NUMBER_OF_SENSORS],
 		Dcoeff[NUMBER_OF_SENSORS];		// PID coefficients
+
 // Global variables used for PID controller's calculations
 float previous_error = 0.0;
 float integral_error = 0.0;
-
 
 /**
  *	@brief	Add a new point to the current reflow list
@@ -196,20 +200,20 @@ void reflow_process(uint32_t tick_interval)
 				MAX31855_read(SENSOR_2, &thermo_temp_2, &internal_temp_2)  );
 
 	// In case of any error from thermocouples, then stop the process
-	/*if (status != 0) {
+	if (status != 0) {
 		private_stop_reflow_process();
 		USB_printf_buff("Error\n");
 		return;
-	}*/
+	}
 
 	// Compute the next desired temperature for the current time (it's also converted to float)
 	target_temp = compute_target_temp(reflow_process_tick);
 
 	// Update SSR's PWM in order to match this temperature
-	SSR_duty1 = compute_duty_cycle(SENSOR_1, tick_interval, thermo_temp_1, target_temp);
-	SSR_set_duty_cycle(SENSOR_1, SSR_duty1);
-	SSR_duty2 = compute_duty_cycle(SENSOR_2, tick_interval, thermo_temp_2, target_temp);
-	SSR_set_duty_cycle(SENSOR_2, SSR_duty2);
+	SSR_duty1 = compute_fake_duty_cycle(SENSOR_1, tick_interval, thermo_temp_1, target_temp);
+	SSR_duty2 = compute_fake_duty_cycle(SENSOR_2, tick_interval, thermo_temp_2, target_temp);
+	SSR_set_duty_cycle(SENSOR_1, max(SSR_duty1, SSR_duty2));
+	SSR_set_duty_cycle(SENSOR_2, max(SSR_duty1, SSR_duty2));
 
 	// Send a feedback to the host PC about the current status
 	USB_printf_buff("time %d target %d temp_1 %d temp_2 %d\n",
@@ -285,11 +289,14 @@ static uint8_t	compute_duty_cycle(SENSOR_ID id, uint32_t delta_time, float therm
 
 	// Compute the theoretical duty cycle
 	current_error = target_temp - thermo_temp;
-	integral_error = integral_error + current_error*delta_time;
-	derivative_error = (current_error - previous_error) / delta_time;
+	integral_error = integral_error + current_error*(delta_time/1000.0f);
+	derivative_error = (current_error - previous_error) / (delta_time/1000.0f);
 	duty = 	Pcoeff[id]*current_error +
 			Icoeff[id]*integral_error +
 			Dcoeff[id]*derivative_error;
+
+	// Update previous_error for the next cycle
+	previous_error = current_error;
 
 	// If it's outside allowed range, then limit it
 	if (duty > SSR_MAX_DUTY) {
@@ -297,4 +304,14 @@ static uint8_t	compute_duty_cycle(SENSOR_ID id, uint32_t delta_time, float therm
 	}
 
 	return (uint8_t)duty;
+}
+
+// That's a basic version of the above function which just implements ON and OFF of the SSR
+static uint8_t	compute_fake_duty_cycle(SENSOR_ID id, uint32_t delta_time, float thermo_temp, float target_temp)
+{
+	if ((target_temp - thermo_temp) >= 0) {
+		return SSR_MAX_DUTY;
+	} else {
+		return SSR_MIN_DUTY;
+	}
 }

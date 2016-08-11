@@ -24,5 +24,6 @@ void SSR_stop();
 void SSR_set_duty_cycle(SENSOR_ID id, uint8_t duty);
 int SSR_force_duty_cycle(int argc, char *argv[]);
 int SSR_lock_duty_cycle(int argc, char *argv[]);
+int SSR_force_on_off(int argc, char *argv[]);
 
 #endif /* SSR_H_ */

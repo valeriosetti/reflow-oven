@@ -94,8 +94,8 @@ void SSR_stop()
 void SSR_set_duty_cycle(SENSOR_ID id, uint8_t duty)
 {
 	// If the duty cycle was previously locked, then do not update it
-	if (isDutyCycleForced)
-		return;
+//	if (isDutyCycleForced)
+//		return;
 
 	// Set the duty cycle for the proper SSR
 	switch (id)
@@ -138,6 +138,7 @@ int SSR_force_duty_cycle(int argc, char *argv[])
 
 	SSR_set_duty_cycle(id, duty);
 
+	USB_printf_buff("OK\n");
 	return 0;
 }
 
@@ -154,4 +155,29 @@ int SSR_lock_duty_cycle(int argc, char *argv[])
 	}
 
 	isDutyCycleForced = atoi(argv[0]);
+	USB_printf_buff("OK\n");
+	return 0;
+}
+
+/**
+ *	@brief	It is used for debug purposes in order to turn the SSRs ON or OFF
+ *	@param	argv[0]	-> '1' means ON; '0' means OFF
+ */
+int SSR_force_on_off(int argc, char *argv[])
+{
+	// Basic parameters check
+	if (argc != 1) {
+		USB_printf_buff("Error\n");
+		return -1;
+	}
+
+	uint8_t value = atoi(argv[0]);
+
+	if (value != 0) {
+		SSR_start();
+	} else {
+		SSR_stop();
+	}
+	USB_printf_buff("OK\n");
+	return 0;
 }

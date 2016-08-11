@@ -17,7 +17,7 @@
 #define MIN_TIME            0+TIME_INTERVAL
 #define MAX_TIME            1200
 
-#define COEFFS_INTERVAL     10.0
+#define COEFFS_INTERVAL     100.0
 #define COEFFS_MIN_VALUE    0.0
 #define COEFFS_MAX_VALUE    1000.0
 
@@ -108,7 +108,7 @@ GUI_frame_ext::GUI_frame_ext(wxWindow* parent)
 
 	graph_sizer->Add( m_plot, 3, wxEXPAND);
 
-	m_plot->SetMargins(10, 10, 10, 40);
+	m_plot->SetMargins(10, 10, 20, 40);
 
 	// Add the reflow starting point by default
     this->points_list->InsertItem(0, wxT("0") );
@@ -205,8 +205,32 @@ void GUI_frame_ext::insert_point( wxCommandEvent& event )
     this->points_list->InsertItem(index, time_text );
     this->points_list->SetItem(index, 1, temp_text );
 
+    // Update the graph
+    this->UpdateSelectedPointGraph();
+}
+
+/*
+    This is a private method used to update the selected points' curve
+*/
+void GUI_frame_ext::UpdateSelectedPointGraph()
+{
+    int num_items = this->points_list->GetItemCount();
+    wxListItem temp_item;
+    wxString time_text, temp_text;
+
     // Refresh the graph
-    this->add_point_to_graph(selected_point_layer, (float)time/1.0, (float)temperature/1.0);
+    this->selected_point_layer->Clear();
+    for (int index=0; index<num_items; index++){
+        temp_item.SetId(index);
+        temp_item.SetColumn(0);
+        this->points_list->GetItem(temp_item);
+        time_text = temp_item.GetText();
+        temp_item.SetColumn(1);
+        this->points_list->GetItem(temp_item);
+        temp_text = temp_item.GetText();
+
+        this->add_point_to_graph(selected_point_layer, (float)atof(time_text.c_str())/1.0, (float)atof(temp_text.c_str())/1.0);
+    }
 }
 
 /*
@@ -247,8 +271,8 @@ void GUI_frame_ext::remove_point( wxCommandEvent& event )
     // Remove the point from the list
     this->points_list->DeleteItem(selected_item);
 
-    // Refresh the graph
-    // TODO: remove the point also from the Layer and uèdate the plot
+    // Update the graph
+    this->UpdateSelectedPointGraph();
 }
 
 /**
@@ -349,8 +373,8 @@ void GUI_frame_ext::stop( wxCommandEvent& event )
 void GUI_frame_ext::add_point_to_graph(mpFXYVector* layer, float x, float y)
 {
     layer->AddData(x,y);
-    //m_plot->FitXOnly(0.0f, MAX_TEMPERATURE);
-    m_plot->Fit();
+    m_plot->FitXOnly(0.0f, MAX_TEMPERATURE);
+    //m_plot->Fit();
 }
 
 /**
@@ -359,8 +383,8 @@ void GUI_frame_ext::add_point_to_graph(mpFXYVector* layer, float x, float y)
 void GUI_frame_ext::reset_graph(mpFXYVector* layer)
 {
     layer->Clear();
-    //m_plot->FitXOnly(0.0f, MAX_TEMPERATURE);
-    m_plot->Fit();
+    m_plot->FitXOnly(0.0f, MAX_TEMPERATURE);
+    //m_plot->Fit();
 }
 
 /**
@@ -491,5 +515,15 @@ void GUI_frame_ext::save_graph( wxCommandEvent& event )
 
 	// Clean up after ourselves
 	OpenDialog->Destroy();
+}
+
+/**
+ *  Remove the captured data from the graph. The desired curve is left on the graph
+ */
+void GUI_frame_ext::reset_graph( wxCommandEvent& event )
+{
+    thermocouple1_layer->Clear();
+    thermocouple2_layer->Clear();
+    m_plot->FitXOnly(0.0f, MAX_TEMPERATURE);
 }
 

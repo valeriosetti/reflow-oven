@@ -33,6 +33,7 @@ CONSOLE_COMMAND allowed_commands[] = {
 		{"start_reflow_process", start_reflow_process},
 		{"set_reflow_process_period", set_reflow_process_period},
 		{"SSR_force_duty_cycle", SSR_force_duty_cycle},
+		{"SSR_force_on_off", SSR_force_on_off},
 		{"SSR_lock_duty_cycle", SSR_lock_duty_cycle},
 		{"test", test},
 		{NULL, NULL}

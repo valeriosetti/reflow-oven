@@ -222,8 +222,22 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_panel1->Layout();
 	bSizer11->Add( m_panel1, 1, wxEXPAND | wxALL, 5 );
 	
+	wxBoxSizer* bSizer12;
+	bSizer12 = new wxBoxSizer( wxHORIZONTAL );
+	
+	
+	bSizer12->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	reset_graph_btn = new wxButton( this, wxID_ANY, wxT("Reset Graph"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer12->Add( reset_graph_btn, 0, wxALL, 5 );
+	
 	save_graph_btn = new wxButton( this, wxID_ANY, wxT("Save graph"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer11->Add( save_graph_btn, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	bSizer12->Add( save_graph_btn, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	
+	
+	bSizer12->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	bSizer11->Add( bSizer12, 0, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	top_sizer->Add( bSizer11, 1, wxEXPAND, 5 );
 	
@@ -242,6 +256,7 @@ GUI_frame::GUI_frame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	reload_config_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::reload_config ), NULL, this );
 	stop_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::stop ), NULL, this );
 	start_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::start ), NULL, this );
+	reset_graph_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::reset_graph ), NULL, this );
 	save_graph_btn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::save_graph ), NULL, this );
 }
 
@@ -257,5 +272,6 @@ GUI_frame::~GUI_frame()
 	reload_config_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::reload_config ), NULL, this );
 	stop_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::stop ), NULL, this );
 	start_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::start ), NULL, this );
+	reset_graph_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::reset_graph ), NULL, this );
 	save_graph_btn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( GUI_frame::save_graph ), NULL, this );
 }

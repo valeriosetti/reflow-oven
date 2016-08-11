@@ -76,7 +76,10 @@ class GUI_frame : public wxFrame
 		wxButton* start_btn;
 		wxPanel* m_panel1;
 		wxBoxSizer* graph_sizer;
+		
+		wxButton* reset_graph_btn;
 		wxButton* save_graph_btn;
+		
 		wxStatusBar* status_bar;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -89,6 +92,7 @@ class GUI_frame : public wxFrame
 		virtual void reload_config( wxCommandEvent& event ) { event.Skip(); }
 		virtual void stop( wxCommandEvent& event ) { event.Skip(); }
 		virtual void start( wxCommandEvent& event ) { event.Skip(); }
+		virtual void reset_graph( wxCommandEvent& event ) { event.Skip(); }
 		virtual void save_graph( wxCommandEvent& event ) { event.Skip(); }
 		
 	
