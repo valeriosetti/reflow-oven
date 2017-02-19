@@ -185,13 +185,15 @@ void reflow_process(uint32_t tick_interval)
 		status = MAX31855_read(SENSOR_1, &thermo_temp_1, &internal_temp_1);
 		PCD8544_GotoXY(0,0);
 		PCD8544_printf_buff("Thermo1 = %d", (int32_t)thermo_temp_1);
-		PCD8544_GotoXY(0,10);
+		PCD8544_GotoXY(0,7);
 		PCD8544_printf_buff("Status1 = %x", status);
 		status = MAX31855_read(SENSOR_2, &thermo_temp_2, &internal_temp_2);
-		PCD8544_GotoXY(0,20);
+		PCD8544_GotoXY(0,14);
 		PCD8544_printf_buff("Thermo2 = %d", (int32_t)thermo_temp_2);
-		PCD8544_GotoXY(0,30);
+		PCD8544_GotoXY(0,21);
 		PCD8544_printf_buff("Status2 = %x", (int32_t)status);
+		PCD8544_GotoXY(0,28);
+		PCD8544_printf_buff("Device in idle state");
 		PCD8544_Refresh();
 		return;
 	}
@@ -230,15 +232,17 @@ void reflow_process(uint32_t tick_interval)
 	// Print temperature data on the LCD
 	PCD8544_Clear();
 	PCD8544_GotoXY(0,0);
-//	PCD8544_printf_buff("Tick = %d", reflow_process_tick);
 	PCD8544_printf_buff("Duty1 = %d", SSR_duty1);
-	PCD8544_GotoXY(0,10);
-//	PCD8544_printf_buff("Target = %d", (int32_t)target_temp);
+	PCD8544_GotoXY(0,7);
 	PCD8544_printf_buff("Duty2 = %d", SSR_duty2);
-	PCD8544_GotoXY(0,20);
+	PCD8544_GotoXY(0,14);
 	PCD8544_printf_buff("Thermo1 = %d", (int32_t)thermo_temp_1);
-	PCD8544_GotoXY(0,30);
+	PCD8544_GotoXY(0,21);
 	PCD8544_printf_buff("Thermo2 = %d", (int32_t)thermo_temp_2);
+	PCD8544_GotoXY(0,28);
+	PCD8544_printf_buff("Target = %d", (int32_t)target_temp);
+	PCD8544_GotoXY(0,35);
+	PCD8544_printf_buff("Time = %d", (int32_t)reflow_process_tick);
 	PCD8544_Refresh();
 
 	// Update the local tick count

@@ -14,7 +14,7 @@
 void SystemClock_Config(void);
 
 /* Private variables */
-uint32_t main_loop_period = 1000*2; // Delay in ms between two consecutive main loop's iterations
+uint32_t main_loop_period = 1000; // Delay in ms between two consecutive main loop's iterations
 
 typedef enum {
 	WAITING_FOR_USB_CONNECTION,
@@ -26,9 +26,7 @@ typedef enum {
  */
 int main(void)
 {
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
-
+	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 	/* Configure the system clock */
 	SystemClock_Config();
 
@@ -45,7 +43,6 @@ int main(void)
 	BSP_LED_Off(LED6);
 
 	/* Configure the LCD */
-
 	PCD8544_Init(0x38);
 
 	/* Initialize the SSR's PWM */
@@ -55,15 +52,11 @@ int main(void)
 	SSR_stop();
 
 	/* Initialize the MAX31855 */
-	HAL_Delay(1000);
+	HAL_Delay(100);
 	MAX31855_init();
 
 	uint32_t start_tick = HAL_GetTick();	// Get the start tick value
 	uint32_t next_tick;
-
-	float thermo_temp_float, int_temp_float;
-	int thermo_temp_int, int_temp_int;
-	uint8_t status;
 
 	/* Infinite loop */
 	while (1)
@@ -110,43 +103,61 @@ int main(void)
 */
 void SystemClock_Config(void)
 {
-
-	RCC_OscInitTypeDef RCC_OscInitStruct;
-	RCC_ClkInitTypeDef RCC_ClkInitStruct;
+	uint32_t tmp;
 
 	__HAL_RCC_PWR_CLK_ENABLE();
-
 	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-	RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-	RCC_OscInitStruct.PLL.PLLM = 4;
-	RCC_OscInitStruct.PLL.PLLN = 72;
-	RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-	RCC_OscInitStruct.PLL.PLLQ = 3;
-	HAL_RCC_OscConfig(&RCC_OscInitStruct);
+	// Turn on the HSE oscillator and wait for it to stabilize
+	RCC->CR |= RCC_CR_HSEON;
+	while ((RCC->CR & RCC_CR_HSERDY) == 0);
 
-	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-							  |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-	HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
+	// Configure the PLL
+	tmp = RCC->PLLCFGR;
+	tmp = (tmp & ~RCC_PLLCFGR_PLLQ) | (7UL << 24);  // Q=7
+	tmp = (tmp & ~RCC_PLLCFGR_PLLP) | (0UL << 16);  // P=2
+	tmp = (tmp & ~RCC_PLLCFGR_PLLN) | (168UL << 6);  // N=168
+	tmp = (tmp & ~RCC_PLLCFGR_PLLM) | (4UL << 0); // M=4
+	tmp |= RCC_PLLCFGR_PLLSRC;  // HSE is PLL's source
+	RCC->PLLCFGR = tmp;
 
-	HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+	// Turn on the PLL and wait for it to lock
+	RCC->CR |= RCC_CR_PLLON;
+	while ((RCC->CR & RCC_CR_PLLRDY) == 0);
 
-	HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+	// Configure peripherals' dividers
+	tmp = RCC->CFGR;
+	tmp = (tmp & ~RCC_CFGR_PPRE2) | RCC_CFGR_PPRE2_DIV2;  // APB2 clock = 84MHz
+	tmp = (tmp & ~RCC_CFGR_PPRE1) | RCC_CFGR_PPRE1_DIV4;  // APB1 clock = 42MHz
+	tmp = (tmp & ~RCC_CFGR_PPRE1) | RCC_CFGR_HPRE_DIV1;  // AHB clock = 168MHz (SysTick will be clocked at 21MHz)
+	RCC->CFGR = tmp;
 
-	/* SysTick_IRQn interrupt configuration */
+	// Configure the Flash latency to 5 wait states (see Table 7 in the Reference Manual)
+	tmp = FLASH->ACR;
+	tmp = (tmp & ~FLASH_ACR_LATENCY) | FLASH_ACR_LATENCY_5WS;
+	FLASH->ACR = tmp;
+
+	// Switch to the PLL generated clock
+	tmp = RCC->CFGR;
+	tmp = (tmp & ~RCC_CFGR_SW) | RCC_CFGR_SW_PLL;
+	RCC->CFGR = tmp;
+	while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL);
+
+
+	// Enable the interrupt from SysTick
 	HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+
+	// Configure the SysTick
+	//	- the counter is reset every 1ms
+	//	- interrupt generation is enabled
+	//	- the counter is enabled
+	SysTick_Config(168000);
+	NVIC_EnableIRQ(SysTick_IRQn);
 }
 
 
 int set_reflow_process_period(int argc, char *argv[])
 {
-	main_loop_period = atoi(argv[0])*2;
+	main_loop_period = atoi(argv[0]);
 	USB_printf_buff("OK\n");
 }

@@ -322,7 +322,7 @@ void PCD8544_InitIO(void) {
 	hSPI.Init.CLKPolarity = SPI_POLARITY_LOW;
 	hSPI.Init.CLKPhase = SPI_PHASE_1EDGE;
 	hSPI.Init.NSS = SPI_NSS_SOFT;
-	hSPI.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
+	hSPI.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
 	hSPI.Init.FirstBit = SPI_FIRSTBIT_MSB;
 	hSPI.Init.TIMode = SPI_TIMODE_DISABLED;
 	hSPI.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLED;
@@ -356,20 +356,12 @@ void PCD8544_Pin(PCD8544_Pin_t pin, PCD8544_State_t state) {
 	}
 }
 
-
-void PCD8544_Delay(unsigned long micros) {
-	volatile unsigned long i;
-	for (i = 0; i < micros; i++) {
-
-	}
-}
-
 void PCD8544_Init(unsigned char contrast) {
 	//Initialize IO's
 	PCD8544_InitIO();
 	//Reset
 	PCD8544_Pin(PCD8544_Pin_RST, PCD8544_State_Low);
-	PCD8544_Delay(10000);
+	HAL_Delay(10);
 	PCD8544_Pin(PCD8544_Pin_RST, PCD8544_State_High);
 
 	// Go in extended mode

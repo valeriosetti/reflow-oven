@@ -13,13 +13,8 @@
 // The timer will configured for a 100Hz period PWM
 #define TIMER			TIM5	// The input clock for this timer is PCLK2=42MHz
 #define TIMER_CLKEN		__TIM5_CLK_ENABLE
-#define TIMER_PRESCALER	42000	// The counter will be clocked at 42MHz/42000=1kHz
-#define TIMER_PERIOD	1000	// The counter will count up to 1000. This reason for this
-								// is that:
-								//		- main supply is 50Hz, which means 100 half-periods per second
-								//		- regulating the capture-compare register in multiple of 10 allows
-								//			to obtain 100 different levels of regulation. Each 10 units
-								//			a semi-period is added or removed.
+#define TIMER_PRESCALER	42000	// The counter will be clocked at 84MHz/42000=2kHz
+#define TIMER_PERIOD	1000	// The counter will count up to 1000
 #define	SSR_MAX_CCR_VALUE	(1000+1) 	// The +1 is added in order to have the chance
 										// to keep the output continuously high
 #define	SSR_MIN_CCR_VALUE	0

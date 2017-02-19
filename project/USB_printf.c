@@ -6,7 +6,7 @@
 // Macros
 #define USB_put_string(_text_, _size_) 		CDC_Transmit_FS(_text_, _size_)
 #define USB_put_char(c) 					CDC_Transmit_FS((uint8_t*)c, 1)
-#define PCD8544_put_string(_text_)			PCD8544_Puts(_text_, PCD8544_Pixel_Set, PCD8544_FontSize_5x7)
+#define PCD8544_put_string(_text_)			PCD8544_Puts(_text_, PCD8544_Pixel_Set, PCD8544_FontSize_3x5)
 
 // Local variables
 #define OUTPUT_BUFFER_SIZE		1024		// Size of the output buffer
