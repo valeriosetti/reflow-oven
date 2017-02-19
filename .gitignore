@@ -4,6 +4,7 @@ build/objs/*
 /.cproject
 /.dep/*
 /.project
+/.settings
 /datasheets/STM32F4xx - Reference manual.pdf
 /GUI/bin
 /GUI/obj

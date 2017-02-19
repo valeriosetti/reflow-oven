@@ -1,0 +1,11 @@
+reflow_point_num 3
+time 0 temp 25
+time 5 temp 100
+time 360 temp 100
+P1_index 1
+I1_index 0
+D1_index 0
+P2_index 1
+I2_index 0
+D2_index 0
+scan_interval_index 1

@@ -1119,13 +1119,13 @@
 
 1462040871 /usr/local/include/wx-3.0/wx/gtk/msgdlg.h
 
-1468751818 /home/valerio/reflow-oven/GUI/communication.h
+1473717912 /home/valerio/reflow-oven/GUI/communication.h
 	"libctb-0.16/include/ctb.h"
 	<wx/msgdlg.h>
 	<wx/timer.h>
 	"stdint.h"
 
-1468768980 source:/home/valerio/reflow-oven/GUI/communication.cpp
+1473717865 source:/home/valerio/reflow-oven/GUI/communication.cpp
 	"communication.h"
 	<sstream>
 
@@ -1548,4 +1548,203 @@
 1462040869 /usr/local/include/wx-3.0/wx/convauto.h
 	"wx/strconv.h"
 	"wx/fontenc.h"
+
+1473717865 source:/home/valerio/Electronic projects/reflow-oven/GUI/communication.cpp
+	"communication.h"
+	<sstream>
+
+1473717912 /home/valerio/Electronic projects/reflow-oven/GUI/communication.h
+	"libctb-0.16/include/ctb.h"
+	<wx/msgdlg.h>
+	<wx/timer.h>
+	"stdint.h"
+
+1462642845 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/ctb.h
+	"fifo.h"
+	"getopt.h"
+	"iobase.h"
+	"kbhit.h"
+	"portscan.h"
+	"serport.h"
+	"serportx.h"
+	"timer.h"
+
+1285508991 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/fifo.h
+	<sys/types.h>
+
+1285508991 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/getopt.h
+	"win32/getopt.h"
+	<getopt.h>
+
+1285508991 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/win32/getopt.h
+
+1462643531 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/iobase.h
+	"fifo.h"
+	<sys/types.h>
+
+1285508991 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/kbhit.h
+
+1285508991 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/portscan.h
+	<string>
+	<vector>
+
+1462641158 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/serport.h
+	"ctb-0.16/include/win32/serport.h"
+	"./linux/serport.h"
+
+1285508990 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/linux/serport.h
+	"ctb-0.16/serportx.h"
+	<linux/serial.h>
+	<termios.h>
+
+1291037119 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/serportx.h
+	<stdio.h>
+	<string.h>
+	"ctb-0.16/iobase.h"
+
+1285508991 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/timer.h
+	"win32/timer.h"
+	"linux/timer.h"
+
+1285508991 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/win32/timer.h
+	<windows.h>
+
+1285508990 /home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/include/linux/timer.h
+	<pthread.h>
+
+1470691272 source:/home/valerio/Electronic projects/reflow-oven/GUI/GUI_interface.cpp
+	"GUI_interface.h"
+
+1470691272 /home/valerio/Electronic projects/reflow-oven/GUI/GUI_interface.h
+	<wx/string.h>
+	<wx/button.h>
+	<wx/gdicmn.h>
+	<wx/font.h>
+	<wx/colour.h>
+	<wx/settings.h>
+	<wx/choice.h>
+	<wx/sizer.h>
+	<wx/statline.h>
+	<wx/stattext.h>
+	<wx/listctrl.h>
+	<wx/panel.h>
+	<wx/statusbr.h>
+	<wx/frame.h>
+
+1473718370 source:/home/valerio/Electronic projects/reflow-oven/GUI/GUI_interface_extend.cpp
+	"GUI_interface_extend.h"
+	<wx/msgdlg.h>
+	"mathplot/mathplot.h"
+	<wx/filedlg.h>
+	<iostream>
+	<string>
+	<fstream>
+
+1470947188 /home/valerio/Electronic projects/reflow-oven/GUI/GUI_interface_extend.h
+	<wx/string.h>
+	<wx/choice.h>
+	<wx/gdicmn.h>
+	<wx/font.h>
+	<wx/colour.h>
+	<wx/settings.h>
+	<wx/button.h>
+	<wx/sizer.h>
+	<wx/frame.h>
+	<wx/string.h>
+	<wx/timer.h>
+	"GUI_interface.h"
+	"communication.h"
+	"libctb-0.16/include/portscan.h"
+	"libctb-0.16/include/ctb.h"
+	"mathplot/mathplot.h"
+	"stdint.h"
+	<string.h>
+	<sstream>
+	<wx/msgdlg.h>
+
+1470168494 /home/valerio/Electronic projects/reflow-oven/GUI/mathplot/mathplot.h
+	<vector>
+	<wx/defs.h>
+	<wx/menu.h>
+	<wx/scrolwin.h>
+	<wx/event.h>
+	<wx/dynarray.h>
+	<wx/pen.h>
+	<wx/dcmemory.h>
+	<wx/string.h>
+	<wx/print.h>
+	<wx/image.h>
+	<deque>
+	<crtdbg.h>
+
+1462642180 source:/home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/src/fifo.cpp
+	"../include/fifo.h"
+
+1285508991 source:/home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/src/getopt.cpp
+	"win32/getopt.cpp"
+
+1462643519 source:/home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/src/iobase.cpp
+	<stdio.h>
+	<string.h>
+	"../include/iobase.h"
+	"../include/timer.h"
+
+1285508991 source:/home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/src/kbhit.cpp
+	<conio.h>
+	<stdio.h>
+	<termios.h>
+
+1468741551 source:/home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/src/portscan.cpp
+	"../include/ctb.h"
+	"../include/portscan.h"
+	<sstream>
+	<glob.h>
+
+1462642925 source:/home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/src/serport.cpp
+	"../include/linux/serport.h"
+	<errno.h>
+	<fcntl.h>
+	<string.h>
+	<sys/ioctl.h>
+	<sys/types.h>
+	<termios.h>
+	<unistd.h>
+
+1462642955 source:/home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/src/serportx.cpp
+	"../include/serportx.h"
+	<sstream>
+
+1285508991 source:/home/valerio/Electronic projects/reflow-oven/GUI/libctb-0.16/src/timer.cpp
+	"ctb-0.16/timer.h"
+	<unistd.h>
+
+1463429529 source:/home/valerio/Electronic projects/reflow-oven/GUI/main.cpp
+	"wx_pch.h"
+	"main.h"
+
+1463429608 /home/valerio/Electronic projects/reflow-oven/GUI/main.h
+	<wx/app.h>
+	"GUI_interface_extend.h"
+	"ctb-0.16/ctb.h"
+
+1470168536 source:/home/valerio/Electronic projects/reflow-oven/GUI/mathplot/mathplot.cpp
+	<wx/window.h>
+	"wx/object.h"
+	"wx/font.h"
+	"wx/colour.h"
+	"wx/settings.h"
+	"wx/sizer.h"
+	"wx/log.h"
+	"wx/intl.h"
+	"wx/dcclient.h"
+	"wx/cursor.h"
+	"mathplot.h"
+	<wx/bmpbuttn.h>
+	<wx/module.h>
+	<wx/msgdlg.h>
+	<wx/image.h>
+	<wx/tipwin.h>
+	<cmath>
+	<cstdio>
+	<ctime>
 

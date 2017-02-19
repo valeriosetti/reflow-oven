@@ -1,0 +1,15 @@
+reflow_point_num 7
+time 0 temp 25
+time 115 temp 25
+time 260 temp 100
+time 320 temp 150
+time 360 temp 230
+time 380 temp 230
+time 405 temp 25
+P1_index 0
+I1_index 0
+D1_index 0
+P2_index 0
+I2_index 0
+D2_index 0
+scan_interval_index 0

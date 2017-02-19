@@ -29,7 +29,7 @@ class Communication :  public ctb::SerialPort
         int start_reflow_process(void);
         int stop_reflow_process(void);
         int set_reflow_process_period(wxString& period);
-        int get_reflow_process_data(uint32_t* tick, uint32_t* target_temp, uint32_t* thermo1, uint32_t* thermo_2);
+        int get_reflow_process_data(uint32_t* tick, uint32_t* target_temp, uint32_t* thermo1, uint32_t* thermo2, uint32_t* duty1, uint32_t* duty2);
 };
 
 #endif // COMMUNICATION_H_INCLUDED

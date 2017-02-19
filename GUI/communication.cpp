@@ -140,7 +140,7 @@ int Communication::set_reflow_process_period(wxString& period)
     return this->send_command(cmd);
 }
 
-int Communication::get_reflow_process_data(uint32_t* tick, uint32_t* target_temp, uint32_t* thermo1, uint32_t* thermo2)
+int Communication::get_reflow_process_data(uint32_t* tick, uint32_t* target_temp, uint32_t* thermo1, uint32_t* thermo2, uint32_t* duty1, uint32_t* duty2)
 {
     int ret_val;
     char* ret_string;
@@ -153,7 +153,7 @@ int Communication::get_reflow_process_data(uint32_t* tick, uint32_t* target_temp
     TEST(strcmp(ret_string,"Stop") == 0, 1);   // End of the job (return a positive value because that's not an error)
     TEST(strcmp(ret_string,"Error") == 0, -2);  // There was an error inside the STM32
 
-    sscanf(ret_string, "time %d target %d temp_1 %d temp_2 %d", tick, target_temp, thermo1, thermo2);
+    sscanf(ret_string, "time %d target %d temp_1 %d temp_2 %d duty_1 %d duty_2 %d", tick, target_temp, thermo1, thermo2, duty1, duty2);
     return 0;
 }
 

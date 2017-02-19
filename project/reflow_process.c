@@ -174,6 +174,7 @@ int set_PID_parameters(int argc, char *argv[])
 void reflow_process(uint32_t tick_interval)
 {
 	float thermo_temp_1, internal_temp_1, thermo_temp_2, internal_temp_2;
+	float avg_thermo;
 	float target_temp;
 	uint8_t status;
 	uint8_t SSR_duty1, SSR_duty2;
@@ -206,21 +207,25 @@ void reflow_process(uint32_t tick_interval)
 		return;
 	}
 
+	avg_thermo = (thermo_temp_1+thermo_temp_2)/2;
+
 	// Compute the next desired temperature for the current time (it's also converted to float)
 	target_temp = compute_target_temp(reflow_process_tick);
 
 	// Update SSR's PWM in order to match this temperature
-	SSR_duty1 = compute_fake_duty_cycle(SENSOR_1, tick_interval, thermo_temp_1, target_temp);
-	SSR_duty2 = compute_fake_duty_cycle(SENSOR_2, tick_interval, thermo_temp_2, target_temp);
+	SSR_duty1 = compute_fake_duty_cycle(SENSOR_1, tick_interval, avg_thermo, target_temp);
+	SSR_duty2 = compute_fake_duty_cycle(SENSOR_2, tick_interval, avg_thermo, target_temp);
 	SSR_set_duty_cycle(SENSOR_1, max(SSR_duty1, SSR_duty2));
 	SSR_set_duty_cycle(SENSOR_2, max(SSR_duty1, SSR_duty2));
 
 	// Send a feedback to the host PC about the current status
-	USB_printf_buff("time %d target %d temp_1 %d temp_2 %d\n",
+	USB_printf_buff("time %d target %d temp_1 %d temp_2 %d duty_1 %d duty_2 %d\n",
 						reflow_process_tick,
 						(int32_t) target_temp,
 						(int32_t) thermo_temp_1,
-						(int32_t) thermo_temp_2 );
+						(int32_t) thermo_temp_2,
+						(uint8_t) SSR_duty1,
+						(uint8_t) SSR_duty2);
 
 	// Print temperature data on the LCD
 	PCD8544_Clear();

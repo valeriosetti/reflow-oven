@@ -339,8 +339,8 @@ void GUI_frame_ext::start( wxCommandEvent& event )
  */
 void GUI_frame_ext::Notify()
 {
-    uint32_t tick, target_temp, thermo1, thermo2;
-    int ret_val = STM32_device->get_reflow_process_data(&tick, &target_temp, &thermo1, &thermo2);
+    uint32_t tick, target_temp, thermo1, thermo2, duty1, duty2;
+    int ret_val = STM32_device->get_reflow_process_data(&tick, &target_temp, &thermo1, &thermo2, &duty1, &duty2);
 
     // In case of error notify the user
     if (ret_val < 0) {
@@ -456,8 +456,13 @@ void GUI_frame_ext::reload_config( wxCommandEvent& event )
         int item_count, menu_index;
         std::string temp_string, time, temperature;
 
-        input_file.open(OpenDialog->GetPath(), std::ios::in);
+        // Delete all the points from the plotting layers
+        this->reset_graph(selected_point_layer);
+        this->reset_graph(thermocouple1_layer);
+        this->reset_graph(thermocouple2_layer);
 
+        // Open the input file
+        input_file.open(OpenDialog->GetPath(), std::ios::in);
         // Reload reflow points
         points_list->DeleteAllItems();
         input_file >> temp_string >> item_count;

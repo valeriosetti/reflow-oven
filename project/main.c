@@ -14,7 +14,7 @@
 void SystemClock_Config(void);
 
 /* Private variables */
-uint32_t main_loop_period = 1000; // Delay in ms between two consecutive main loop's iterations
+uint32_t main_loop_period = 1000*2; // Delay in ms between two consecutive main loop's iterations
 
 typedef enum {
 	WAITING_FOR_USB_CONNECTION,
@@ -45,6 +45,7 @@ int main(void)
 	BSP_LED_Off(LED6);
 
 	/* Configure the LCD */
+
 	PCD8544_Init(0x38);
 
 	/* Initialize the SSR's PWM */
@@ -54,6 +55,7 @@ int main(void)
 	SSR_stop();
 
 	/* Initialize the MAX31855 */
+	HAL_Delay(1000);
 	MAX31855_init();
 
 	uint32_t start_tick = HAL_GetTick();	// Get the start tick value
@@ -145,6 +147,6 @@ void SystemClock_Config(void)
 
 int set_reflow_process_period(int argc, char *argv[])
 {
-	main_loop_period = atoi(argv[0]);
+	main_loop_period = atoi(argv[0])*2;
 	USB_printf_buff("OK\n");
 }
