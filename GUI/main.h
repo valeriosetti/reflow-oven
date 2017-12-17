@@ -12,7 +12,7 @@
 
 #include <wx/app.h>
 #include "GUI_interface_extend.h"
-#include "ctb-0.16/ctb.h"
+#include "libctb-0.16/include/ctb.h"
 
 class MainClass : public wxApp
 {

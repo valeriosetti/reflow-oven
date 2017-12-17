@@ -9,7 +9,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include "ctb-0.16/serportx.h"
+#include "../serportx.h"
 #include <linux/serial.h>
 #include <termios.h>
 
@@ -17,7 +17,7 @@ namespace ctb {
 
 /*!
   \class SerialPort
-   
+
   \brief the linux version
 */
     class SerialPort : public SerialPort_x
@@ -29,7 +29,7 @@ namespace ctb {
 	   int fd;
 	   /*!
 		\brief Linux defines this struct termios for controling asynchronous
-		communication. t covered the active settings, save_t the original 
+		communication. t covered the active settings, save_t the original
 		settings.
 	   */
 	   struct termios t, save_t;
@@ -49,7 +49,7 @@ namespace ctb {
 		\return speed_t linux specific data type, defined in termios.h
 	   */
 	   speed_t AdaptBaudrate( int baud );
-    
+
 	   int CloseDevice();
 	   int OpenDevice(const char* devname, void* dcs);
 

@@ -50,6 +50,8 @@
 #include <cstdio> // used only for debug
 #include <ctime> // used for representation of x axes involving date
 
+#include <sstream>
+
 // #include "pixel.xpm"
 
 // Memory leak debugging
@@ -2241,7 +2243,10 @@ bool mpWindow::SaveScreenshot(const wxString& filename, int type, wxSize imageSi
 	}
     // Once drawing is complete, actually save screen shot
     wxImage screenImage = screenBuffer.ConvertToImage();
-    return screenImage.SaveFile(filename, type);
+    std::stringstream ss;
+    ss << type;
+    std::string type_str = ss.str();
+    return screenImage.SaveFile(filename, type_str);
 }
 
 void mpWindow::SetMargins(int top, int right, int bottom, int left)

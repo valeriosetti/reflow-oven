@@ -8,7 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 
-#include "ctb-0.16/timer.h"
+#include "../include/timer.h"
 #include <unistd.h>
 
 namespace ctb {
@@ -28,7 +28,7 @@ namespace ctb {
 	   pthread_cleanup_push(timer_exit,NULL);
 	   timer_control *tc = (timer_control*)arg;
 	   // linux allows a real sleep, means the timer thread will
-	   // be sleeping (no reduce of the system performance) 
+	   // be sleeping (no reduce of the system performance)
 	   usleep(tc->usecs);
 	   // time is over, system reawake the thread.
 	   // if there is an exit function, calling it

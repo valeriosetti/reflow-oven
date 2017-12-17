@@ -36,7 +36,6 @@
 		</Compiler>
 		<Linker>
 			<Add option="`wx-config --libs`" />
-			<Add library="/usr/local/lib/libctb-0.16.a" />
 		</Linker>
 		<Unit filename="GUI_interface.cpp" />
 		<Unit filename="GUI_interface.fbp" />
